@@ -5,10 +5,7 @@ using UnityEngine;
 
 public class CanvasEnv : MonoBehaviour
 {
-    public GameObject pixelAgent;
-    public int xPos;
-    public int zPos;
-    public int pixelCount;
+    public GameObject[] pixelAgent = new GameObject[8];
 
     public GameObject Spot;
 
@@ -28,10 +25,6 @@ public class CanvasEnv : MonoBehaviour
     float[] cordList = new float[SIZE];
     float cords = -11.25f;
 
-    //  List holding all pixels
-
-    List<GameObject> Pixels = new List<GameObject>();
-    
     //  List holding all grid squares
 
     List<GameObject> GridSquares = new List<GameObject>();
@@ -45,8 +38,8 @@ public class CanvasEnv : MonoBehaviour
     private float forwardInput;
 
 
-
-    private void Awake()
+    // Start is called before the first frame update
+    void Start()
     {
         for (int i = 0; i < SIZE; i++)
         {
@@ -55,20 +48,7 @@ public class CanvasEnv : MonoBehaviour
         }
 
         StartCoroutine(SpotDrop());
-        StartCoroutine(PixDrop());
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //for (int i = 0; i < SIZE; i++)
-        //{
-        //    cordList[i] = cords;
-        //    cords += 2.5f;
-        //}
-
-        //StartCoroutine(SpotDrop());
-        //StartCoroutine(PixDrop());
+        //InitPixel();
     }
 
 
@@ -90,66 +70,31 @@ public class CanvasEnv : MonoBehaviour
 
     //  Spawn all pixels
 
-    IEnumerator PixDrop()
-    {
-        Hashtable canvas = new Hashtable();
-        string key;
-
-        for (int i = 0; i < pixelCount; i++)
-        {
-            do
-            {
-                xPos = Random.Range(0, SIZE);
-                zPos = Random.Range(0, SIZE);
-                key = string.Format("{0:N2}", xPos);
-                key += string.Format("{0:N2}", zPos);
-            } while (canvas[key] != null);
-
-            canvas[key] = true;
-
-            Pixels.Add(Instantiate(pixelAgent, new Vector3(cordList[xPos], 0.125f, cordList[zPos]), Quaternion.identity));
-            yield return new WaitForSeconds(0f);
-        }
-    }
 
     // Update is called once per frame
     void Update()
     {
-        if (GridSquares.Count == SIZE * SIZE)
-        {
-            for (int i = 0; i < SIZE * SIZE; i++)
-            {
-                if (Spots[i].IsIn)
-                {
-                    Debug.Log("Index: " + i + Spots[i].IsIn);
-                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-                }
-                else
-                {
-                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 0, 0);
-                }
-            }
-        }
-
-        // This is for player input
-        horizontalInput = Input.GetAxis("Horizontal");
-        forwardInput = Input.GetAxis("Vertical");
-
-
-        //  Test that individual pixels could be tacked and moved
-        //  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-        //if (Pixels.Count > 2 && Pixels.Count == pixelCount) //  Making sure the pixel exists and don't let it move until all pixels have been spawned
-        if (GridSquares.Count == SIZE * SIZE)   //  Don't let pixels move untile grid is set
-            Pixels[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-            Pixels[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
-
-        //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        //  Test that individual pixels could be tacked and moved
-    }
-
-    void SpotFilled()
-    {
 
     }
+
+    //void InitPixel()
+    //{
+    //    Hashtable canvas = new Hashtable();
+    //    string key;
+
+    //    for (int i = 0; i < pixelCount; i++)
+    //    {
+    //        do
+    //        {
+    //            xPos = Random.Range(0, SIZE);
+    //            zPos = Random.Range(0, SIZE);
+    //            key = string.Format("{0:N2}", xPos);
+    //            key += string.Format("{0:N2}", zPos);
+    //        } while (canvas[key] != null);
+
+    //        canvas[key] = true;
+
+    //        Pixels.Add(Instantiate(pixelAgent, new Vector3(cordList[xPos], 0.125f, cordList[zPos]), Quaternion.identity));
+    //    }
+    //}
 }
