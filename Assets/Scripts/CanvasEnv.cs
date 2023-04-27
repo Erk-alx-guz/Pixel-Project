@@ -5,6 +5,25 @@ using UnityEngine;
 
 public class CanvasEnv : MonoBehaviour
 {
+    //  pictures
+    int pictureIndex = 6;
+
+    int[] canvas = new int[SIZE * SIZE];
+
+    int[,] pictures = { { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
+                      , { 44, 53, 55, 62, 63, 64, 65, 66}       //  Triangle
+                      , { 24, 34, 43, 44, 45, 54, 64, 74}       //  Cross
+                      , { 34, 35, 43, 46, 53, 56, 64, 65}       //  Invers square
+                      , { 34, 43, 45, 53, 54, 55, 63, 65}       //  Letter A
+                      , { 33, 36, 44, 45, 54, 55, 63, 66}       //  Invers of Invers square
+                      , { 33, 43, 44, 45, 53, 55, 63, 65} };    //  Letter n
+
+
+
+
+
+
+
     public GameObject[] pixelAgent = new GameObject[8];
 
     public GameObject Spot;
@@ -23,20 +42,13 @@ public class CanvasEnv : MonoBehaviour
 
     const int SIZE = 10;
     float[] cordList = new float[SIZE];
-    float cords = -11.25f;
+    float cords = 11.25f;
 
     //  List holding all grid squares
 
     List<GameObject> GridSquares = new List<GameObject>();
 
     InSpot[] Spots = new InSpot[SIZE * SIZE];
-
-
-    // User input
-    //private float speed = 40.0f;
-    //private float horizontalInput;
-    //private float forwardInput;
-
 
     //  Is the environment ready
     public bool ready = false;
@@ -45,10 +57,21 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canvas[pictures[pictureIndex, 0]] = 1;
+        canvas[pictures[pictureIndex, 1]] = 1;
+        canvas[pictures[pictureIndex, 2]] = 1;
+        canvas[pictures[pictureIndex, 3]] = 1;
+        canvas[pictures[pictureIndex, 4]] = 1;
+        canvas[pictures[pictureIndex, 5]] = 1;
+        canvas[pictures[pictureIndex, 6]] = 1;
+        canvas[pictures[pictureIndex, 7]] = 1;
+
         for (int i = 0; i < SIZE; i++)
         {
             cordList[i] = cords;
-            cords += 2.5f;
+            cords -= 2.5f;
+
+            canvas[i] = 0;
         }
 
         StartCoroutine(SpotDrop());
@@ -78,7 +101,16 @@ public class CanvasEnv : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (ready)
+        {
+            for (int i = 0; i < SIZE * SIZE; i++)
+            {
+                if (canvas[i] == 1)
+                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+                else if (canvas[i] == 0)
+                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+            }
+        }
     }
 
 

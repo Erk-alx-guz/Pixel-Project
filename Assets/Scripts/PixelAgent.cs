@@ -15,33 +15,19 @@ public class PixelAgent : Agent
 
     GameObject pixel;
 
+    // User input
+    private float speed = 40.0f;
+    private float horizontalInput;
+    private float forwardInput;
+
     public override void Initialize()
     {
         pixel = gameObject;
-
-        //m_BallRb = Ball.GetComponent<Rigidbody>();
-
-        //m_JdController = GetComponent<JointDriveController>();
-
-        //m_JdController.SetupBodyPart(Upper);
-        //m_JdController.SetupBodyPart(Lower);
     }
 
     public override void OnEpisodeBegin()
     {
-
-
-
-
-        ////Reset all of the body parts
-        //foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
-        //{
-        //    bodyPart.Reset(bodyPart);
-        //}
-
-        //m_BallRb.velocity = new Vector3(0f, 0f, 0f);
-        //m_BallRb.angularVelocity = new Vector3(0f, 0f, 0f);
-        //m_BallRb.transform.position = new Vector3(0f, 4f, Random.Range(-7.4f, 7.4f)) + Table.transform.position;
+        //  Maybe set velocity to zero
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -51,14 +37,19 @@ public class PixelAgent : Agent
         //  The picture
 
         //  Maybe whats taken?
+
     }
 
 
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
     public override void Heuristic(in ActionBuffers actionsOut)
     {
+        // This is for player input
+        horizontalInput = Input.GetAxis("Horizontal");
+        forwardInput = Input.GetAxis("Vertical");
 
-
+        pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
+        pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
 
         //var i = -1;
         //var inputAction = actionsOut.ContinuousActions;
@@ -80,32 +71,21 @@ public class PixelAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        var i = -1;
+
+        var vectorAction = actionBuffers.ContinuousActions;
+
         //  Don't do anything untill the environment is ready
         if (env.ready)
         {
-
+            pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
+            pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
         }
+        
+        //  REWARDS
+        
+        //  filling a pixel on the picture
 
-
-
-
-        //var vectorAction = actionBuffers.ContinuousActions;
-
-        //var bpDict = m_JdController.bodyPartsDict;
-        //var i = -1;
-
-        //bpDict[Upper].SetJointTargetRotation(vectorAction[++i], 0, 0);
-        //bpDict[Lower].SetJointTargetRotation(vectorAction[++i], 0, 0);
-
-        //bpDict[Upper].SetJointStrength(vectorAction[++i]);
-        //bpDict[Lower].SetJointStrength(vectorAction[++i]);
-
-        //AddReward((float)(5.0f / Math.Pow(2.0f, Math.Abs(Table.transform.position.z - Ball.transform.position.z))));
-        //AddReward((float)(1.0f / Math.Pow(2.0f, Math.Abs(m_BallRb.velocity.z))));
-        //AddReward((float)(1.0f / Math.Pow(2.0f, Math.Abs(m_BallRb.velocity.y))));
-        //AddReward((float)(-1 * Math.Abs(m_BallRb.velocity.x)));
-        //AddReward((float)(1.0f / Math.Pow(2.0f, Math.Abs(Table.transform.rotation.x))));
-        //AddReward((float)(1.0f / Math.Pow(2.0f, Math.Abs(Upper.transform.rotation.x))));
-        //AddReward((float)(1.0f / Math.Pow(2.0f, Math.Abs(Lower.transform.rotation.x))));
+        //  Don't get out of the canvas
     }
 }
