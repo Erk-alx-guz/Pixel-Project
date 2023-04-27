@@ -33,9 +33,13 @@ public class CanvasEnv : MonoBehaviour
 
 
     // User input
-    private float speed = 40.0f;
-    private float horizontalInput;
-    private float forwardInput;
+    //private float speed = 40.0f;
+    //private float horizontalInput;
+    //private float forwardInput;
+
+
+    //  Is the environment ready
+    public bool ready = false;
 
 
     // Start is called before the first frame update
@@ -48,7 +52,7 @@ public class CanvasEnv : MonoBehaviour
         }
 
         StartCoroutine(SpotDrop());
-        //InitPixel();
+        InitPixel();
     }
 
 
@@ -62,13 +66,13 @@ public class CanvasEnv : MonoBehaviour
             {
                 GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.125f, cordList[j]), Quaternion.identity));
                 Spots[i * SIZE + j] = GridSquares[i * SIZE + j].GetComponent<InSpot>();
+
+                EnvironmentReady();
+
                 yield return new WaitForSeconds(0f);
             }
         }
     }
-
-
-    //  Spawn all pixels
 
 
     // Update is called once per frame
@@ -77,24 +81,33 @@ public class CanvasEnv : MonoBehaviour
 
     }
 
-    //void InitPixel()
-    //{
-    //    Hashtable canvas = new Hashtable();
-    //    string key;
 
-    //    for (int i = 0; i < pixelCount; i++)
-    //    {
-    //        do
-    //        {
-    //            xPos = Random.Range(0, SIZE);
-    //            zPos = Random.Range(0, SIZE);
-    //            key = string.Format("{0:N2}", xPos);
-    //            key += string.Format("{0:N2}", zPos);
-    //        } while (canvas[key] != null);
+    //  Pixel random spawner 
+    void InitPixel()
+    {
+        Hashtable spotTaken = new Hashtable();
+        string key;
+        int pixelCount = 8;
+        int xPos, zPos;
 
-    //        canvas[key] = true;
+        for (int i = 0; i < pixelCount; i++)
+        {
+            do
+            {
+                xPos = Random.Range(0, SIZE);
+                zPos = Random.Range(0, SIZE);
+                key = string.Format("{0:N2}", xPos);
+                key += string.Format("{0:N2}", zPos);
+            } while (spotTaken[key] != null);           //  check if the location is taken 
 
-    //        Pixels.Add(Instantiate(pixelAgent, new Vector3(cordList[xPos], 0.125f, cordList[zPos]), Quaternion.identity));
-    //    }
-    //}
+            spotTaken[key] = true;
+
+            pixelAgent[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+        }
+    }
+
+    void EnvironmentReady()
+    {
+        ready = (GridSquares.Count == SIZE * SIZE);
+    }
 }
