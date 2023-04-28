@@ -99,22 +99,22 @@ public class CanvasEnv : MonoBehaviour
     {
         //////  Testing Pictures
 
-        if (ready)
-        {
-            for (int i = 0; i < SIZE * SIZE; i++)
-            {
-                if (canvas[i] == 1)   // (canvas[i] == 1)
-                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-                else// if (canvas[i] == 0)
-                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
-            }
-        }
+        //if (ready)
+        //{
+        //    for (int i = 0; i < SIZE * SIZE; i++)
+        //    {
+        //        if (canvas[i] == 1)   // (canvas[i] == 1)
+        //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+        //        else// if (canvas[i] == 0)
+        //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+        //    }
+        //}
 
 
 
-        ////  Environment reward
-        //for (int i = 0; i < numAgents; ++i)
-        //    pixelAgent[i].AddReward(Mathf.Pow((TakenSpots() / numAgents), 2));
+        //  Environment reward
+        for (int i = 0; i < numAgents; ++i)
+            pixelAgent[i].AddReward(Mathf.Pow((TakenSpots() / numAgents), 2));
     }
 
     //  Pixel random spawner 
@@ -138,6 +138,7 @@ public class CanvasEnv : MonoBehaviour
             spotTaken[key] = true;
 
             pixelObject[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+            pixelAgent[i] = pixelObject[i].GetComponent<PixelAgent>();
         }
     }
 
@@ -151,10 +152,17 @@ public class CanvasEnv : MonoBehaviour
         int takenSpots = 0;
         for (int i = 0; i < numAgents; i++)
         {
-            if (Spots[pictures[pictureIndex, i]].taken)
+            if (Spots[14].taken)
                 takenSpots++;
         }
 
         return takenSpots;
     }
 }
+
+
+
+//  self assembly 
+
+
+

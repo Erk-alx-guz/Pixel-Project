@@ -695,6 +695,7 @@ MonoBehaviour:
   - {fileID: 296702237}
   Spot: {fileID: 4143830508264377102, guid: 691f653d6b648754a8348d1ed46c1ffe, type: 3}
   size: 10
+  cords: 11.25
   ready: 0
 --- !u!1 &745426609
 GameObject:
