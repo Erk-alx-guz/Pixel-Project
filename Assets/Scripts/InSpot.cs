@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InSpot : MonoBehaviour
 {
-    public bool IsIn = false;
+    public bool taken = false;
     Collider coll;
     // Start is called before the first frame update
     void Start()
@@ -25,11 +25,11 @@ public class InSpot : MonoBehaviour
         {
             if(coll.bounds.Contains(other.bounds.center)) // && coll.bounds.Contains(other.bounds.min))
             {
-                IsIn = true;
+                taken = true;
             }
             else
             {
-                IsIn= false;
+                taken = false;
             }
         }
     }

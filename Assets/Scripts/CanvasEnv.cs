@@ -6,11 +6,12 @@ using UnityEngine;
 public class CanvasEnv : MonoBehaviour
 {
     //  pictures
-    int pictureIndex = 6;
+    int pictureIndex = 0;
 
-    int[] canvas = new int[SIZE * SIZE];
+    public int[] canvas = new int[SIZE * SIZE];
 
-    int[,] pictures = { { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
+    int[,] pictures = { { 14, 24, 34, 44, 54, 64, 74, 84}       //  Line
+                      , { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
                       , { 44, 53, 55, 62, 63, 64, 65, 66}       //  Triangle
                       , { 24, 34, 43, 44, 45, 54, 64, 74}       //  Cross
                       , { 34, 35, 43, 46, 53, 56, 64, 65}       //  Invers square
@@ -20,11 +21,11 @@ public class CanvasEnv : MonoBehaviour
 
 
 
+    const int numAgents = 8;
 
+    public PixelAgent[] pixelAgent = new PixelAgent[numAgents];
 
-
-
-    public GameObject[] pixelAgent = new GameObject[8];
+    public GameObject[] pixelObject = new GameObject[numAgents];
 
     public GameObject Spot;
 
@@ -41,8 +42,9 @@ public class CanvasEnv : MonoBehaviour
     //  -+          --
 
     const int SIZE = 10;
+    public int size = SIZE;
     float[] cordList = new float[SIZE];
-    float cords = 11.25f;
+    public float cords = 11.25f;
 
     //  List holding all grid squares
 
@@ -57,14 +59,8 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        canvas[pictures[pictureIndex, 0]] = 1;
-        canvas[pictures[pictureIndex, 1]] = 1;
-        canvas[pictures[pictureIndex, 2]] = 1;
-        canvas[pictures[pictureIndex, 3]] = 1;
-        canvas[pictures[pictureIndex, 4]] = 1;
-        canvas[pictures[pictureIndex, 5]] = 1;
-        canvas[pictures[pictureIndex, 6]] = 1;
-        canvas[pictures[pictureIndex, 7]] = 1;
+        for (int i = 0; i < numAgents; i++)
+            canvas[pictures[pictureIndex, i]] = 1;
 
         for (int i = 0; i < SIZE; i++)
         {
@@ -101,18 +97,25 @@ public class CanvasEnv : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //////  Testing Pictures
+
         if (ready)
         {
             for (int i = 0; i < SIZE * SIZE; i++)
             {
-                if (canvas[i] == 1)
+                if (canvas[i] == 1)   // (canvas[i] == 1)
                     GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-                else if (canvas[i] == 0)
+                else// if (canvas[i] == 0)
                     GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
             }
         }
-    }
 
+
+
+        ////  Environment reward
+        //for (int i = 0; i < numAgents; ++i)
+        //    pixelAgent[i].AddReward(Mathf.Pow((TakenSpots() / numAgents), 2));
+    }
 
     //  Pixel random spawner 
     void InitPixel()
@@ -134,12 +137,24 @@ public class CanvasEnv : MonoBehaviour
 
             spotTaken[key] = true;
 
-            pixelAgent[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+            pixelObject[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
         }
     }
 
     void EnvironmentReady()
     {
-        ready = (GridSquares.Count == SIZE * SIZE);
+        ready = (GridSquares.Count == Mathf.Pow(SIZE, 2));
+    }
+
+    int TakenSpots()
+    {
+        int takenSpots = 0;
+        for (int i = 0; i < numAgents; i++)
+        {
+            if (Spots[pictures[pictureIndex, i]].taken)
+                takenSpots++;
+        }
+
+        return takenSpots;
     }
 }

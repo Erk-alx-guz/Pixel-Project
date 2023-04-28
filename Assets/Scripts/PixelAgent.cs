@@ -35,6 +35,8 @@ public class PixelAgent : Agent
         //  Where the agent is
         sensor.AddObservation(pixel.transform.position);
         //  The picture
+        for (int i = 0;i < env.size * env.size; i++)
+            sensor.AddObservation(env.canvas[i]);
 
         //  Maybe whats taken?
 
