@@ -6,7 +6,7 @@ using UnityEngine;
 public class CanvasEnv : MonoBehaviour
 {
     //  pictures
-    int pictureIndex = 0;
+    int pictureIndex = 1;
 
     public int[] canvas = new int[SIZE * SIZE];
 
@@ -59,6 +59,7 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //  Set the pixels on the canvas
         for (int i = 0; i < numAgents; i++)
             canvas[pictures[pictureIndex, i]] = 1;
 
@@ -67,7 +68,12 @@ public class CanvasEnv : MonoBehaviour
             cordList[i] = cords;
             cords -= 2.5f;
 
-            canvas[i] = 0;
+
+            for (int j = 0; j < SIZE; j++)  //  Fill the rest of the canvas with zeros
+            {
+                if (canvas[i * SIZE + j] != 1)
+                    canvas[i * SIZE + j] = 0;
+            }
         }
 
         StartCoroutine(SpotDrop());
@@ -86,7 +92,7 @@ public class CanvasEnv : MonoBehaviour
                 GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.125f, cordList[j]), Quaternion.identity));
                 Spots[i * SIZE + j] = GridSquares[i * SIZE + j].GetComponent<InSpot>();
 
-                //EnvironmentReady();
+                EnvironmentReady();
 
                 yield return new WaitForSeconds(0f);
             }
@@ -97,24 +103,23 @@ public class CanvasEnv : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //////  Testing Pictures
+        if (ready)  //  The environment must be set up befor doing anything
+        {
+            //for (int i = 0; i < SIZE * SIZE; i++)
+            //{
+            //    if (Spots[i].taken)   // (canvas[i] == 1)
+            //        GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            //    else// if (canvas[i] == 0)
+            //        GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+            //}
 
-        //if (ready)
-        //{
-        //    for (int i = 0; i < SIZE * SIZE; i++)
-        //    {
-        //        if (Spots[i].taken)   // (canvas[i] == 1)
-        //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-        //        else// if (canvas[i] == 0)
-        //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
-        //    }
-        //}
 
-        EnvironmentReady();
+            //  Environment reward
+            for (int i = 0; i < numAgents; ++i)
+                pixelAgent[i].AddReward(Mathf.Pow(TakenSpots() / numAgents, 2));
 
-        //  Environment reward
-        for (int i = 0; i < numAgents; ++i)
-            pixelAgent[i].AddReward(Mathf.Pow((TakenSpots() / numAgents), 2));
+            print(Mathf.Pow((float) TakenSpots() / (float) numAgents, 2));
+        }
     }
 
     //  Pixel random spawner 
@@ -122,10 +127,9 @@ public class CanvasEnv : MonoBehaviour
     {
         Hashtable spotTaken = new Hashtable();
         string key;
-        int pixelCount = 8;
         int xPos, zPos;
 
-        for (int i = 0; i < pixelCount; i++)
+        for (int i = 0; i < numAgents; i++)
         {
             do
             {
@@ -139,24 +143,42 @@ public class CanvasEnv : MonoBehaviour
 
             pixelObject[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
             pixelAgent[i] = pixelObject[i].GetComponent<PixelAgent>();
+
+            ////Test mode
+            //ToIndex(pictures[pictureIndex, i], ref xPos, ref zPos);
+            //pixelObject[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+            //pixelAgent[i] = pixelObject[i].GetComponent<PixelAgent>();
         }
     }
 
     void EnvironmentReady()
     {
-        ready = (GridSquares.Count == Mathf.Pow(SIZE, 2));
+        ready = GridSquares.Count == Mathf.Pow(SIZE, 2);
     }
 
+    //  Spots taken on the picture by pixel agents
     int TakenSpots()
     {
         int takenSpots = 0;
         for (int i = 0; i < numAgents; i++)
         {
-            if (Spots[1].taken)
+            if (Spots[pictures[pictureIndex,i]].taken)
                 takenSpots++;
         }
-
         return takenSpots;
+    }
+
+    void ToIndex(int index,ref int x,ref int y)
+    {
+        string snum = index.ToString();
+
+        if (snum.Length == 1)
+            x = snum[0] - 48;
+        else
+        {
+            x = snum[0] - 48;
+            y = snum[1] - 48;
+        }
     }
 }
 
