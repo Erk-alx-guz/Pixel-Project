@@ -86,7 +86,7 @@ public class CanvasEnv : MonoBehaviour
                 GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.125f, cordList[j]), Quaternion.identity));
                 Spots[i * SIZE + j] = GridSquares[i * SIZE + j].GetComponent<InSpot>();
 
-                EnvironmentReady();
+                //EnvironmentReady();
 
                 yield return new WaitForSeconds(0f);
             }
@@ -103,14 +103,14 @@ public class CanvasEnv : MonoBehaviour
         //{
         //    for (int i = 0; i < SIZE * SIZE; i++)
         //    {
-        //        if (canvas[i] == 1)   // (canvas[i] == 1)
+        //        if (Spots[i].taken)   // (canvas[i] == 1)
         //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
         //        else// if (canvas[i] == 0)
         //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
         //    }
         //}
 
-
+        EnvironmentReady();
 
         //  Environment reward
         for (int i = 0; i < numAgents; ++i)
@@ -152,7 +152,7 @@ public class CanvasEnv : MonoBehaviour
         int takenSpots = 0;
         for (int i = 0; i < numAgents; i++)
         {
-            if (Spots[14].taken)
+            if (Spots[1].taken)
                 takenSpots++;
         }
 
