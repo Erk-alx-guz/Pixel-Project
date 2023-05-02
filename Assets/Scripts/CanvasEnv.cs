@@ -5,30 +5,6 @@ using UnityEngine;
 
 public class CanvasEnv : MonoBehaviour
 {
-    //  pictures
-    int pictureIndex = 1;
-
-    public int[] canvas = new int[SIZE * SIZE];
-
-    int[,] pictures = { { 14, 24, 34, 44, 54, 64, 74, 84}       //  Line
-                      , { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
-                      , { 44, 53, 55, 62, 63, 64, 65, 66}       //  Triangle
-                      , { 24, 34, 43, 44, 45, 54, 64, 74}       //  Cross
-                      , { 34, 35, 43, 46, 53, 56, 64, 65}       //  Invers square
-                      , { 34, 43, 45, 53, 54, 55, 63, 65}       //  Letter A
-                      , { 33, 36, 44, 45, 54, 55, 63, 66}       //  Invers of Invers square
-                      , { 33, 43, 44, 45, 53, 55, 63, 65} };    //  Letter n
-
-
-
-    const int numAgents = 8;
-
-    public PixelAgent[] pixelAgent = new PixelAgent[numAgents];
-
-    public GameObject[] pixelObject = new GameObject[numAgents];
-
-    public GameObject Spot;
-
     //  Scale
     //  40 X 40: cords = -48.75f
     //  20 X 20: cords = -23.75f
@@ -44,7 +20,32 @@ public class CanvasEnv : MonoBehaviour
     const int SIZE = 10;
     public int size = SIZE;
     float[] cordList = new float[SIZE];
-    public float cords = 11.25f;
+    float cords = 11.25f;
+    float boundary = 11.25f;
+
+    const int numAgents = 8;
+
+
+    //  pictures
+    int pictureIndex = 1;
+
+    public int[] canvas = new int[SIZE * SIZE];
+
+    int[,] pictures = { { 14, 24, 34, 44, 54, 64, 74, 84}       //  Line
+                      , { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
+                      , { 44, 53, 55, 62, 63, 64, 65, 66}       //  Triangle
+                      , { 24, 34, 43, 44, 45, 54, 64, 74}       //  Cross
+                      , { 34, 35, 43, 46, 53, 56, 64, 65}       //  Invers square
+                      , { 34, 43, 45, 53, 54, 55, 63, 65}       //  Letter A
+                      , { 33, 36, 44, 45, 54, 55, 63, 66}       //  Invers of Invers square
+                      , { 33, 43, 44, 45, 53, 55, 63, 65} };    //  Letter n
+
+
+    public PixelAgent[] pixelAgent = new PixelAgent[numAgents];
+
+    public GameObject[] pixelObject = new GameObject[numAgents];
+
+    public GameObject Spot;
 
     //  List holding all grid squares
 
@@ -68,6 +69,7 @@ public class CanvasEnv : MonoBehaviour
             cordList[i] = cords;
             cords -= 2.5f;
 
+            print(cordList[i]);
 
             for (int j = 0; j < SIZE; j++)  //  Fill the rest of the canvas with zeros
             {
@@ -105,20 +107,24 @@ public class CanvasEnv : MonoBehaviour
     {
         if (ready)  //  The environment must be set up befor doing anything
         {
-            //for (int i = 0; i < SIZE * SIZE; i++)
-            //{
-            //    if (Spots[i].taken)   // (canvas[i] == 1)
-            //        GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-            //    else// if (canvas[i] == 0)
-            //        GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
-            //}
+            for (int i = 0; i < SIZE * SIZE; i++)
+            {
+                if (Spots[i].taken)   // (canvas[i] == 1)
+                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+                else// if (canvas[i] == 0)
+                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+            }
 
 
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow(TakenSpots() / numAgents, 2));
 
-            print(Mathf.Pow((float) TakenSpots() / (float) numAgents, 2));
+            //print(Mathf.Pow((float) TakenSpots() / (float) numAgents, 2));
+
+
+            //  Test outside of boundary
+            print(OutOfBoundary());
         }
     }
 
@@ -179,6 +185,24 @@ public class CanvasEnv : MonoBehaviour
             x = snum[0] - 48;
             y = snum[1] - 48;
         }
+    }
+
+    bool OutOfBoundary()
+    {
+        //  check all pixels are with in the set area
+        //  check pixel transforms
+
+        //  1.235 diff
+        //    if pixelObject[0].transform.position.x > 12.485 || pixelObject[0].transform.position.x < -12.485 then pixel is out
+        //    if pixelObject[0].transform.position.z > 12.485 || pixelObject[0].transform.position.z < -12.485 then pixel is out
+
+        if (pixelObject[0].transform.position.x > boundary + 1.235f || pixelObject[0].transform.position.x < -1 * boundary - 1.235
+            || pixelObject[0].transform.position.z > boundary + 1.235f || pixelObject[0].transform.position.z < -1 * boundary - 1.235 || pixelObject[0].transform.position.y < 0)
+        {
+            return true;
+        }
+
+        return false;   
     }
 }
 
