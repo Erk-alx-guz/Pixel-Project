@@ -118,7 +118,7 @@ public class CanvasEnv : MonoBehaviour
 
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
-                pixelAgent[i].AddReward(Mathf.Pow(TakenSpots() / numAgents, 2));
+                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / (float)numAgents, 2));
 
             //print(Mathf.Pow((float) TakenSpots() / (float) numAgents, 2));
 
