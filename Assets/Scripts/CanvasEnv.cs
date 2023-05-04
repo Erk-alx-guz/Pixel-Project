@@ -20,8 +20,8 @@ public class CanvasEnv : MonoBehaviour
     const int SIZE = 10;
     public int size = SIZE;
     float[] cordList = new float[SIZE];
-    float cords = 11.25f;
-    float boundary = 11.25f;
+    float startingCords = 11.25f;
+    const float boundary = 11.25f;
 
     const int numAgents = 8;
 
@@ -66,10 +66,10 @@ public class CanvasEnv : MonoBehaviour
 
         for (int i = 0; i < SIZE; i++)
         {
-            cordList[i] = cords;
-            cords -= 2.5f;
+            cordList[i] = startingCords;
+            startingCords -= 2.5f;
 
-            print(cordList[i]);
+            //print(cordList[i]);
 
             for (int j = 0; j < SIZE; j++)  //  Fill the rest of the canvas with zeros
             {
@@ -128,7 +128,10 @@ public class CanvasEnv : MonoBehaviour
         }
     }
 
-    //  Pixel random spawner 
+    /// <summary>
+    /// Spawns pixels in a random position in training mode
+    /// and used to place pixels in a particular pattern if testing
+    /// </summary>
     void InitPixel()
     {
         Hashtable spotTaken = new Hashtable();
@@ -157,12 +160,19 @@ public class CanvasEnv : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Used to check the grid is ready
+    /// </summary>
     void EnvironmentReady()
     {
         ready = GridSquares.Count == Mathf.Pow(SIZE, 2);
     }
 
-    //  Spots taken on the picture by pixel agents
+    /// <summary>
+    /// Checks what spots are taken on the picture by pixel agents
+    /// </summary>
+    /// <returns></returns>
     int TakenSpots()
     {
         int takenSpots = 0;
@@ -174,6 +184,17 @@ public class CanvasEnv : MonoBehaviour
         return takenSpots;
     }
 
+
+    /// <summary>
+    /// This function converts the locations of the shape in pictures into 
+    /// two indexes that can be used to spawnd the agents in the shape chosen
+    /// in the pictures array.
+    /// 
+    /// This is only a test function
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     void ToIndex(int index,ref int x,ref int y)
     {
         string snum = index.ToString();
@@ -187,6 +208,11 @@ public class CanvasEnv : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Used to check if any pixels are outside of the area they are allowd to be in
+    /// </summary>
+    /// <returns></returns>
     bool OutOfBoundary()
     {
         //  check all pixels are with in the set area
@@ -195,14 +221,18 @@ public class CanvasEnv : MonoBehaviour
         //  1.235 diff
         //    if pixelObject[0].transform.position.x > 12.485 || pixelObject[0].transform.position.x < -12.485 then pixel is out
         //    if pixelObject[0].transform.position.z > 12.485 || pixelObject[0].transform.position.z < -12.485 then pixel is out
-
-        if (pixelObject[0].transform.position.x > boundary + 1.235f || pixelObject[0].transform.position.x < -1 * boundary - 1.235
-            || pixelObject[0].transform.position.z > boundary + 1.235f || pixelObject[0].transform.position.z < -1 * boundary - 1.235 || pixelObject[0].transform.position.y < 0)
+        for (int i = 0; i < numAgents; i++)
         {
-            return true;
+            if (pixelObject[i].transform.position.x > boundary + 1.235f || pixelObject[i].transform.position.x < -1 * boundary - 1.235
+                || pixelObject[i].transform.position.z > boundary + 1.235f || pixelObject[i].transform.position.z < -1 * boundary - 1.235 
+                || pixelObject[i].transform.position.y < 0)
+            {
+                //  then pixel is out
+                return true;
+            }
         }
 
-        return false;   
+        return false;
     }
 }
 
