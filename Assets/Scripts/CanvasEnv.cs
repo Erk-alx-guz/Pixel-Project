@@ -17,21 +17,26 @@ public class CanvasEnv : MonoBehaviour
     //
     //  -+          --
 
-    const int SIZE = 10;
-    public int size = SIZE;
-    float[] cordList = new float[SIZE];
+
+    const int ENV_MATRIX_SIZE = 40;
+    const int CANVAS_SIZE = 10;
+    public int size = CANVAS_SIZE;
+    float[] cordList = new float[CANVAS_SIZE];
     float startingCords = 11.25f;
     const float boundary = 11.25f;
 
     const int numAgents = 8;
 
+    //  Matrix of how the environment looks
+    public float[] environment = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
 
     //  pictures
-    int pictureIndex = 1;
+    int pictureIndex = 0;
 
-    public int[] canvas = new int[SIZE * SIZE];
+    //  Matrix of how the pixel art looks
+    public float[] canvas = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
 
-    int[,] pictures = { { 14, 24, 34, 44, 54, 64, 74, 84}       //  Line
+    int[,] pictures = { { 03, 11, 19, 27, 35, 43, 51, 59}       //  Line
                       , { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
                       , { 44, 53, 55, 62, 63, 64, 65, 66}       //  Triangle
                       , { 24, 34, 43, 44, 45, 54, 64, 74}       //  Cross
@@ -41,6 +46,7 @@ public class CanvasEnv : MonoBehaviour
                       , { 33, 43, 44, 45, 53, 55, 63, 65} };    //  Letter n
 
 
+    //  Array of the Agent scripts to 
     public PixelAgent[] pixelAgent = new PixelAgent[numAgents];
 
     public GameObject[] pixelObject = new GameObject[numAgents];
@@ -51,31 +57,38 @@ public class CanvasEnv : MonoBehaviour
 
     List<GameObject> GridSquares = new List<GameObject>();
 
-    InSpot[] Spots = new InSpot[SIZE * SIZE];
-
-    //  Is the environment ready
-    public bool ready = false;
-
+    InSpot[] Spots = new InSpot[CANVAS_SIZE * CANVAS_SIZE];
 
     // Start is called before the first frame update
     void Start()
     {
+        int dif = 659;
         //  Set the pixels on the canvas
         for (int i = 0; i < numAgents; i++)
-            canvas[pictures[pictureIndex, i]] = 1;
+        {
+            //canvas[pictures[pictureIndex, i]] = 1;
+            canvas[dif] = 1;
+            dif += 40;
+        }
 
-        for (int i = 0; i < SIZE; i++)
+        //  Fill the rest of the canvas with zeros
+        for (int i = 0; i < ENV_MATRIX_SIZE; i++)
+        {
+            for (int j = 0; j < ENV_MATRIX_SIZE; j++)
+            {
+                if (canvas[i * ENV_MATRIX_SIZE + j] != 1)
+                    canvas[i * ENV_MATRIX_SIZE + j] = 0;
+
+                print(i * ENV_MATRIX_SIZE + j + ": " + canvas[i * ENV_MATRIX_SIZE + j]);
+            }
+        }
+
+        for (int i = 0; i < CANVAS_SIZE; i++)
         {
             cordList[i] = startingCords;
             startingCords -= 2.5f;
 
             //print(cordList[i]);
-
-            for (int j = 0; j < SIZE; j++)  //  Fill the rest of the canvas with zeros
-            {
-                if (canvas[i * SIZE + j] != 1)
-                    canvas[i * SIZE + j] = 0;
-            }
         }
 
         StartCoroutine(SpotDrop());
@@ -84,17 +97,14 @@ public class CanvasEnv : MonoBehaviour
 
 
     //  Spawn all grid squares
-
     IEnumerator SpotDrop()
     {
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < CANVAS_SIZE; i++)
         {
-            for (int j = 0; j < SIZE; j++)
+            for (int j = 0; j < CANVAS_SIZE; j++)
             {
                 GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.125f, cordList[j]), Quaternion.identity));
-                Spots[i * SIZE + j] = GridSquares[i * SIZE + j].GetComponent<InSpot>();
-
-                EnvironmentReady();
+                Spots[i * CANVAS_SIZE + j] = GridSquares[i * CANVAS_SIZE + j].GetComponent<InSpot>();
 
                 yield return new WaitForSeconds(0f);
             }
@@ -105,26 +115,39 @@ public class CanvasEnv : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ready)  //  The environment must be set up befor doing anything
+        if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
-            for (int i = 0; i < SIZE * SIZE; i++)
-            {
-                if (Spots[i].taken)   // (canvas[i] == 1)
-                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-                else// if (canvas[i] == 0)
-                    GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
-            }
+            VisualizePixelTracking();
 
 
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
-                pixelAgent[i].AddReward(Mathf.Pow(TakenSpots() / numAgents, 2));
+                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / (float)numAgents, 2));
 
             //print(Mathf.Pow((float) TakenSpots() / (float) numAgents, 2));
 
 
             //  Test outside of boundary
-            print(OutOfBoundary());
+            //print(OutOfBoundary());
+        }
+    }
+
+
+    /// <summary>
+    /// Test function to see how well the pixels are being tracked
+    /// </summary>
+    void VisualizePixelTracking()
+    {
+        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
+
+
+        int index = (ENV_MATRIX_SIZE - CANVAS_SIZE) / 2;
+        for (int i = 0; i < CANVAS_SIZE * CANVAS_SIZE; i++)
+        {
+            if (canvas[index * ENV_MATRIX_SIZE + index + i] == 1)//(Spots[i].taken)   // 
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            else// if (canvas[i] == 0)
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
         }
     }
 
@@ -142,8 +165,8 @@ public class CanvasEnv : MonoBehaviour
         {
             do
             {
-                xPos = Random.Range(0, SIZE);
-                zPos = Random.Range(0, SIZE);
+                xPos = Random.Range(0, CANVAS_SIZE);
+                zPos = Random.Range(0, CANVAS_SIZE);
                 key = string.Format("{0:N2}", xPos);
                 key += string.Format("{0:N2}", zPos);
             } while (spotTaken[key] != null);           //  check if the location is taken 
@@ -164,9 +187,9 @@ public class CanvasEnv : MonoBehaviour
     /// <summary>
     /// Used to check the grid is ready
     /// </summary>
-    void EnvironmentReady()
+    public bool EnvironmentReady()
     {
-        ready = GridSquares.Count == Mathf.Pow(SIZE, 2);
+        return GridSquares.Count == Mathf.Pow(CANVAS_SIZE, 2);
     }
 
     /// <summary>
@@ -231,7 +254,6 @@ public class CanvasEnv : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 }

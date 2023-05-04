@@ -14,6 +14,7 @@ public class PixelAgent : Agent
     public CanvasEnv env;
 
     GameObject pixel;
+    Rigidbody pixel_RB;
 
     // User input
     private float speed = 40.0f;
@@ -23,11 +24,13 @@ public class PixelAgent : Agent
     public override void Initialize()
     {
         pixel = gameObject;
+        pixel_RB = GetComponent<Rigidbody>();
     }
 
     public override void OnEpisodeBegin()
     {
         //  Maybe set velocity to zero
+        pixel_RB.velocity = Vector3.zero;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -78,11 +81,13 @@ public class PixelAgent : Agent
         var vectorAction = actionBuffers.ContinuousActions;
 
         //  Don't do anything untill the environment is ready
-        if (env.ready)
+        if (env.EnvironmentReady())
         {
             pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
             pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
         }
+
+        
         
         //  REWARDS
         
