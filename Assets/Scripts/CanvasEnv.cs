@@ -19,10 +19,10 @@ public class CanvasEnv : MonoBehaviour
 
 
     const int ENV_MATRIX_SIZE = 40;
-    const int CANVAS_SIZE = 8;
+    const int CANVAS_SIZE = 32;
     public int size = CANVAS_SIZE;
     float[] cordList = new float[CANVAS_SIZE];
-    const float boundary = 8.75f;
+    const float boundary = 38.75f;
     float startingCords = boundary;
 
     const int numAgents = 8;
@@ -140,13 +140,13 @@ public class CanvasEnv : MonoBehaviour
     {
         //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
 
-
-        int index = (ENV_MATRIX_SIZE - CANVAS_SIZE) / 2;
+        int maxIndex = (ENV_MATRIX_SIZE - 8) / 2;
+        int curIndex = (CANVAS_SIZE - 8) / 2;
         for (int i = 0; i < CANVAS_SIZE; i++)
         {
             for (int j = 0; j < CANVAS_SIZE; j++)
             {
-                if (canvas[(index + i) * ENV_MATRIX_SIZE + (index + j)] == 1)//(Spots[i].taken)   // 
+                if (canvas[(maxIndex + i - curIndex) * ENV_MATRIX_SIZE + maxIndex + (j - curIndex)] == 1)//(Spots[i].taken)   // 
                     GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
                 else// if (canvas[i] == 0)
                     GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
