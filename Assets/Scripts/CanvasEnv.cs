@@ -36,14 +36,14 @@ public class CanvasEnv : MonoBehaviour
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
 
-    int[,] pictures = { { 03, 11, 19, 27, 35, 43, 51, 59}       //  Line
-                      , { 43, 44, 45, 53, 55, 63, 64, 65}       //  Square
-                      , { 44, 53, 55, 62, 63, 64, 65, 66}       //  Triangle
-                      , { 24, 34, 43, 44, 45, 54, 64, 74}       //  Cross
-                      , { 34, 35, 43, 46, 53, 56, 64, 65}       //  Invers square
-                      , { 34, 43, 45, 53, 54, 55, 63, 65}       //  Letter A
-                      , { 33, 36, 44, 45, 54, 55, 63, 66}       //  Invers of Invers square
-                      , { 33, 43, 44, 45, 53, 55, 63, 65} };    //  Letter n
+    int[,] pictures = { { 03, 11, 19, 27, 35, 43, 51, 59} };      //  Line
+                          //  Square
+                          //  Triangle
+                          //  Cross
+                          //  Invers square
+                          //  Letter A
+                          //  Invers of Invers square
+                          //  Letter n
 
 
     //  Array of the Agent scripts to 
@@ -62,14 +62,28 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int dif = 659;
         //  Set the pixels on the canvas
         for (int i = 0; i < numAgents; i++)
         {
-            //canvas[pictures[pictureIndex, i]] = 1;
-            canvas[dif] = 1;
-            dif += 40;
+            int xIndex = 0;
+            int yIndex = 0;
+            int lastCol = numAgents - 1;
+
+            for (int j = 0; j < numAgents; j++)
+            {
+                if (pictures[pictureIndex, j] < lastCol)
+                {
+                    xIndex = j;
+                    break;
+                }
+                lastCol += 8;
+            }
+            yIndex = pictures[pictureIndex, i] - xIndex * numAgents;
+
+            // (40 - 8)/ 2
+            //int temp = xIndex + (())
         }
+
 
         //  Fill the rest of the canvas with zeros
         for (int i = 0; i < ENV_MATRIX_SIZE; i++)
@@ -137,6 +151,17 @@ public class CanvasEnv : MonoBehaviour
     /// Test function to see how well the pixels are being tracked
     /// </summary>
     void VisualizePixelTracking()
+    {
+        for (int i = 0; i < CANVAS_SIZE * CANVAS_SIZE; i++)
+        {
+            if (Spots[i].taken)   // (canvas[i] == 1)
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            else// if (canvas[i] == 0)
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+        }
+    }
+
+    void VisualizeImage()
     {
         //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
 
@@ -227,7 +252,7 @@ public class CanvasEnv : MonoBehaviour
 
         if (snum.Length == 1)
             x = snum[0] - 48;
-        else
+        else if (snum.Length == 2)
         {
             x = snum[0] - 48;
             y = snum[1] - 48;
