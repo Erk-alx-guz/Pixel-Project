@@ -65,23 +65,26 @@ public class CanvasEnv : MonoBehaviour
         //  Set the pixels on the canvas
         for (int i = 0; i < numAgents; i++)
         {
-            int xIndex = 0;
-            int yIndex = 0;
+            int pictureIndex_X = 0;
+            int pictureIndex_y = 0;
             int lastCol = numAgents - 1;
 
             for (int j = 0; j < numAgents; j++)
             {
                 if (pictures[pictureIndex, j] < lastCol)
                 {
-                    xIndex = j;
+                    pictureIndex_X = j;
                     break;
                 }
                 lastCol += 8;
             }
-            yIndex = pictures[pictureIndex, i] - xIndex * numAgents;
+            pictureIndex_y = pictures[pictureIndex, i] - pictureIndex_X * numAgents;
 
             // (40 - 8)/ 2
-            //int temp = xIndex + (())
+            int canvasIndex_X = pictureIndex_X + ((ENV_MATRIX_SIZE - numAgents) / 2);
+            int canvasIndex_y = pictureIndex_y + ((ENV_MATRIX_SIZE - numAgents) / 2);
+
+            canvas[canvasIndex_X * ENV_MATRIX_SIZE + canvasIndex_y] = 1;
         }
 
 
