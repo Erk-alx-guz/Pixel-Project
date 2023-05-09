@@ -19,13 +19,13 @@ public class CanvasEnv : MonoBehaviour
 
 
     const int ENV_MATRIX_SIZE = 40;
-    const int CANVAS_SIZE = 36;
+    const int CANVAS_SIZE = 10;
     public int size = CANVAS_SIZE;
     float[] cordList = new float[CANVAS_SIZE];
-    const float boundary = 43.75f;
+    const float boundary = 11.25f;
     float startingCords = boundary;
 
-    const int numAgents = 8;
+    const int numAgents = 2;
 
     //  Matrix of how the environment looks
     public float[] environment = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
@@ -36,14 +36,14 @@ public class CanvasEnv : MonoBehaviour
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
 
-    int[,] pictures = { { 03, 11, 19, 27, 35, 43, 51, 59}       //  Line
-                      , { 18, 19, 20, 26, 28, 34, 35, 36}       //  Square
-                      , { 19, 26, 28, 33, 34, 35, 36, 37}       //  Triangle
-                      , { 11, 19, 26, 27, 28, 35, 43, 51}       //  Cross
-                      , { 19, 20, 26, 29, 34, 37, 43, 44}       //  Invers square
-                      , { 19, 26, 28, 34, 35, 36, 42, 44}       //  Letter A
-                      , { 18, 21, 27, 28, 35, 36, 42, 45}       //  Invers of Invers square
-                      , { 18, 26, 27, 28, 34, 36, 42, 44} };    //  Letter n
+    int[,] pictures = { { 03, 59}       
+                      , { 47, 09}   
+                      , { 51, 34}    
+                      , { 11, 43}    
+                      , { 06, 60}    
+                      , { 34, 19}     
+                      , { 60, 36}    
+                      , { 27, 28} };
 
 
     //  Array of the Agent scripts to 
@@ -67,23 +67,23 @@ public class CanvasEnv : MonoBehaviour
         {
             int pictureIndex_X = 0;
             int pictureIndex_Y = 0;
-            int lastCol = numAgents - 1;
+            int lastCol = CANVAS_SIZE - 1;
 
             //  This for loop is looking for x 
-            for (int j = 0; j < numAgents; j++)
+            for (int j = 0; j < CANVAS_SIZE; j++)
             {
-                if (pictures[pictureIndex, i] < lastCol)
+                if (pictures[pictureIndex, i] <= lastCol)
                 {
                     pictureIndex_X = j;
                     break;
                 }
-                lastCol += 8;
+                lastCol += CANVAS_SIZE;
             }
-            pictureIndex_Y = pictures[pictureIndex, i] - pictureIndex_X * numAgents;
+            pictureIndex_Y = pictures[pictureIndex, i] - pictureIndex_X * CANVAS_SIZE;
 
-            // (40 - 8)/ 2
-            int canvasIndex_X = pictureIndex_X + ((ENV_MATRIX_SIZE - numAgents) / 2);
-            int canvasIndex_Y = pictureIndex_Y + ((ENV_MATRIX_SIZE - numAgents) / 2);
+            // (40 - CANVAS_SIZE)/ 2
+            int canvasIndex_X = pictureIndex_X + ((ENV_MATRIX_SIZE - CANVAS_SIZE) / 2);
+            int canvasIndex_Y = pictureIndex_Y + ((ENV_MATRIX_SIZE - CANVAS_SIZE) / 2);
 
             int canvasIndex = canvasIndex_X * ENV_MATRIX_SIZE + canvasIndex_Y;
 
@@ -98,8 +98,6 @@ public class CanvasEnv : MonoBehaviour
             {
                 if (canvas[i * ENV_MATRIX_SIZE + j] != 1)
                     canvas[i * ENV_MATRIX_SIZE + j] = 0;
-
-                //print(i * ENV_MATRIX_SIZE + j + ": " + canvas[i * ENV_MATRIX_SIZE + j]);
             }
         }
 
@@ -107,8 +105,6 @@ public class CanvasEnv : MonoBehaviour
         {
             cordList[i] = startingCords;
             startingCords -= 2.5f;
-
-            //print(cordList[i]);
         }
 
         StartCoroutine(SpotDrop());
@@ -137,18 +133,11 @@ public class CanvasEnv : MonoBehaviour
     {
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
-            //VisualizeImage();
-
-
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
-                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / (float)numAgents, 2));
+                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
-            //print(Mathf.Pow((float) TakenSpots() / (float) numAgents, 2));
-
-
-            //  Test outside of boundary
-            print(OutOfBoundary());
+            VisualizeImage();
         }
     }
 
@@ -165,11 +154,6 @@ public class CanvasEnv : MonoBehaviour
             else// if (canvas[i] == 0)
                 GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
         }
-    }
-
-    void VisualizeImage()
-    {
-        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
 
         int maxIndex = (ENV_MATRIX_SIZE - 8) / 2;
         int curIndex = (CANVAS_SIZE - 8) / 2;
@@ -177,7 +161,23 @@ public class CanvasEnv : MonoBehaviour
         {
             for (int j = 0; j < CANVAS_SIZE; j++)
             {
-                if (canvas[(maxIndex + i - curIndex) * ENV_MATRIX_SIZE + maxIndex + (j - curIndex)] == 1)//(Spots[i].taken)   // 
+                if (canvas[(maxIndex + i - curIndex) * ENV_MATRIX_SIZE + maxIndex + (j - curIndex)] == 1)
+                    GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 255);
+            }
+        }
+    }
+
+
+    void VisualizeImage()
+    {
+        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
+
+        int maxIndex = (ENV_MATRIX_SIZE - CANVAS_SIZE) / 2;
+        for (int i = 0; i < CANVAS_SIZE; i++)
+        {
+            for (int j = 0; j < CANVAS_SIZE; j++)
+            {
+                if (canvas[(maxIndex + i) * ENV_MATRIX_SIZE + maxIndex + j] == 1) 
                     GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
                 else// if (canvas[i] == 0)
                     GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
