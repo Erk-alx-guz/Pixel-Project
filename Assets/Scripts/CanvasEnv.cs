@@ -19,10 +19,10 @@ public class CanvasEnv : MonoBehaviour
 
 
     const int ENV_MATRIX_SIZE = 40;
-    const int CANVAS_SIZE = 32;
+    const int CANVAS_SIZE = 36;
     public int size = CANVAS_SIZE;
     float[] cordList = new float[CANVAS_SIZE];
-    const float boundary = 38.75f;
+    const float boundary = 43.75f;
     float startingCords = boundary;
 
     const int numAgents = 8;
@@ -31,19 +31,19 @@ public class CanvasEnv : MonoBehaviour
     public float[] environment = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
 
     //  pictures
-    int pictureIndex = 0;
+    int pictureIndex = 5;
 
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
 
-    int[,] pictures = { { 03, 11, 19, 27, 35, 43, 51, 59} };      //  Line
-                          //  Square
-                          //  Triangle
-                          //  Cross
-                          //  Invers square
-                          //  Letter A
-                          //  Invers of Invers square
-                          //  Letter n
+    int[,] pictures = { { 03, 11, 19, 27, 35, 43, 51, 59}       //  Line
+                      , { 18, 19, 20, 26, 28, 34, 35, 36}       //  Square
+                      , { 19, 26, 28, 33, 34, 35, 36, 37}       //  Triangle
+                      , { 11, 19, 26, 27, 28, 35, 43, 51}       //  Cross
+                      , { 19, 20, 26, 29, 34, 37, 43, 44}       //  Invers square
+                      , { 19, 26, 28, 34, 35, 36, 42, 44}       //  Letter A
+                      , { 18, 21, 27, 28, 35, 36, 42, 45}       //  Invers of Invers square
+                      , { 18, 26, 27, 28, 34, 36, 42, 44} };    //  Letter n
 
 
     //  Array of the Agent scripts to 
@@ -66,25 +66,28 @@ public class CanvasEnv : MonoBehaviour
         for (int i = 0; i < numAgents; i++)
         {
             int pictureIndex_X = 0;
-            int pictureIndex_y = 0;
+            int pictureIndex_Y = 0;
             int lastCol = numAgents - 1;
 
+            //  This for loop is looking for x 
             for (int j = 0; j < numAgents; j++)
             {
-                if (pictures[pictureIndex, j] < lastCol)
+                if (pictures[pictureIndex, i] < lastCol)
                 {
                     pictureIndex_X = j;
                     break;
                 }
                 lastCol += 8;
             }
-            pictureIndex_y = pictures[pictureIndex, i] - pictureIndex_X * numAgents;
+            pictureIndex_Y = pictures[pictureIndex, i] - pictureIndex_X * numAgents;
 
             // (40 - 8)/ 2
             int canvasIndex_X = pictureIndex_X + ((ENV_MATRIX_SIZE - numAgents) / 2);
-            int canvasIndex_y = pictureIndex_y + ((ENV_MATRIX_SIZE - numAgents) / 2);
+            int canvasIndex_Y = pictureIndex_Y + ((ENV_MATRIX_SIZE - numAgents) / 2);
 
-            canvas[canvasIndex_X * ENV_MATRIX_SIZE + canvasIndex_y] = 1;
+            int canvasIndex = canvasIndex_X * ENV_MATRIX_SIZE + canvasIndex_Y;
+
+            canvas[canvasIndex] = 1;
         }
 
 
@@ -96,7 +99,7 @@ public class CanvasEnv : MonoBehaviour
                 if (canvas[i * ENV_MATRIX_SIZE + j] != 1)
                     canvas[i * ENV_MATRIX_SIZE + j] = 0;
 
-                print(i * ENV_MATRIX_SIZE + j + ": " + canvas[i * ENV_MATRIX_SIZE + j]);
+                //print(i * ENV_MATRIX_SIZE + j + ": " + canvas[i * ENV_MATRIX_SIZE + j]);
             }
         }
 
@@ -134,7 +137,7 @@ public class CanvasEnv : MonoBehaviour
     {
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
-            VisualizePixelTracking();
+            //VisualizeImage();
 
 
             //  Environment reward
@@ -145,7 +148,7 @@ public class CanvasEnv : MonoBehaviour
 
 
             //  Test outside of boundary
-            //print(OutOfBoundary());
+            print(OutOfBoundary());
         }
     }
 
