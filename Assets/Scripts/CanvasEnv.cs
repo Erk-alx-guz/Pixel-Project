@@ -18,23 +18,23 @@ public class CanvasEnv : MonoBehaviour
     //  -+          --
 
 
-    const int ENV_MATRIX_SIZE = 40;
-    const int CANVAS_SIZE = 10;
-    public int size = CANVAS_SIZE;
-    float[] cordList = new float[CANVAS_SIZE];
+    const int MAX_MATRIX_SIZE = 40;
+    const int CURRENT_MATRIX_SIZE = 10;
+    public int size = CURRENT_MATRIX_SIZE;
+    float[] cordList = new float[CURRENT_MATRIX_SIZE];
     const float boundary = 11.25f;
     float startingCords = boundary;
 
     const int numAgents = 2;
 
     //  Matrix of how the environment looks
-    public float[] environment = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
+    public float[] environment = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
     //  pictures
     int pictureIndex = 5;
 
     //  Matrix of how the pixel art looks
-    public float[] canvas = new float[ENV_MATRIX_SIZE * ENV_MATRIX_SIZE];
+    public float[] canvas = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
     int[,] pictures = { { 03, 59}       
                       , { 47, 09}   
@@ -57,7 +57,7 @@ public class CanvasEnv : MonoBehaviour
 
     List<GameObject> GridSquares = new List<GameObject>();
 
-    InSpot[] Spots = new InSpot[CANVAS_SIZE * CANVAS_SIZE];
+    InSpot[] Spots = new InSpot[CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE];
 
     // Start is called before the first frame update
     void Start()
@@ -65,43 +65,21 @@ public class CanvasEnv : MonoBehaviour
         //  Set the pixels on the canvas
         for (int i = 0; i < numAgents; i++)
         {
-            int pictureIndex_X = 0;
-            int pictureIndex_Y = 0;
-            int lastCol = CANVAS_SIZE - 1;
-
-            //  This for loop is looking for x 
-            for (int j = 0; j < CANVAS_SIZE; j++)
-            {
-                if (pictures[pictureIndex, i] <= lastCol)
-                {
-                    pictureIndex_X = j;
-                    break;
-                }
-                lastCol += CANVAS_SIZE;
-            }
-            pictureIndex_Y = pictures[pictureIndex, i] - pictureIndex_X * CANVAS_SIZE;
-
-            // (40 - CANVAS_SIZE)/ 2
-            int canvasIndex_X = pictureIndex_X + ((ENV_MATRIX_SIZE - CANVAS_SIZE) / 2);
-            int canvasIndex_Y = pictureIndex_Y + ((ENV_MATRIX_SIZE - CANVAS_SIZE) / 2);
-
-            int canvasIndex = canvasIndex_X * ENV_MATRIX_SIZE + canvasIndex_Y;
-
-            canvas[canvasIndex] = 1;
+            canvas[Convert(pictures[pictureIndex,i])] = 1;
         }
 
 
         //  Fill the rest of the canvas with zeros
-        for (int i = 0; i < ENV_MATRIX_SIZE; i++)
+        for (int i = 0; i < MAX_MATRIX_SIZE; i++)
         {
-            for (int j = 0; j < ENV_MATRIX_SIZE; j++)
+            for (int j = 0; j < MAX_MATRIX_SIZE; j++)
             {
-                if (canvas[i * ENV_MATRIX_SIZE + j] != 1)
-                    canvas[i * ENV_MATRIX_SIZE + j] = 0;
+                if (canvas[i * MAX_MATRIX_SIZE + j] != 1)
+                    canvas[i * MAX_MATRIX_SIZE + j] = 0;
             }
         }
 
-        for (int i = 0; i < CANVAS_SIZE; i++)
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
         {
             cordList[i] = startingCords;
             startingCords -= 2.5f;
@@ -115,12 +93,12 @@ public class CanvasEnv : MonoBehaviour
     //  Spawn all grid squares
     IEnumerator SpotDrop()
     {
-        for (int i = 0; i < CANVAS_SIZE; i++)
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
         {
-            for (int j = 0; j < CANVAS_SIZE; j++)
+            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
                 GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.125f, cordList[j]), Quaternion.identity));
-                Spots[i * CANVAS_SIZE + j] = GridSquares[i * CANVAS_SIZE + j].GetComponent<InSpot>();
+                Spots[i * CURRENT_MATRIX_SIZE + j] = GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<InSpot>();
 
                 yield return new WaitForSeconds(0f);
             }
@@ -136,7 +114,6 @@ public class CanvasEnv : MonoBehaviour
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
-
             VisualizeImage();
         }
     }
@@ -147,7 +124,7 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void VisualizePixelTracking()
     {
-        for (int i = 0; i < CANVAS_SIZE * CANVAS_SIZE; i++)
+        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
         {
             if (Spots[i].taken)   // (canvas[i] == 1)
                 GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
@@ -155,14 +132,13 @@ public class CanvasEnv : MonoBehaviour
                 GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
         }
 
-        int maxIndex = (ENV_MATRIX_SIZE - 8) / 2;
-        int curIndex = (CANVAS_SIZE - 8) / 2;
-        for (int i = 0; i < CANVAS_SIZE; i++)
+        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
         {
-            for (int j = 0; j < CANVAS_SIZE; j++)
+            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
-                if (canvas[(maxIndex + i - curIndex) * ENV_MATRIX_SIZE + maxIndex + (j - curIndex)] == 1)
-                    GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 255);
+                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
             }
         }
     }
@@ -172,15 +148,13 @@ public class CanvasEnv : MonoBehaviour
     {
         //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
 
-        int maxIndex = (ENV_MATRIX_SIZE - CANVAS_SIZE) / 2;
-        for (int i = 0; i < CANVAS_SIZE; i++)
+        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
         {
-            for (int j = 0; j < CANVAS_SIZE; j++)
+            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
-                if (canvas[(maxIndex + i) * ENV_MATRIX_SIZE + maxIndex + j] == 1) 
-                    GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-                else// if (canvas[i] == 0)
-                    GridSquares[i * CANVAS_SIZE + j].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1) 
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
             }
         }
     }
@@ -199,8 +173,8 @@ public class CanvasEnv : MonoBehaviour
         {
             do
             {
-                xPos = Random.Range(0, CANVAS_SIZE);
-                zPos = Random.Range(0, CANVAS_SIZE);
+                xPos = Random.Range(0, CURRENT_MATRIX_SIZE);
+                zPos = Random.Range(0, CURRENT_MATRIX_SIZE);
                 key = string.Format("{0:N2}", xPos);
                 key += string.Format("{0:N2}", zPos);
             } while (spotTaken[key] != null);           //  check if the location is taken 
@@ -223,7 +197,7 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     public bool EnvironmentReady()
     {
-        return GridSquares.Count == Mathf.Pow(CANVAS_SIZE, 2);
+        return GridSquares.Count == Mathf.Pow(CURRENT_MATRIX_SIZE, 2);
     }
 
     /// <summary>
@@ -289,6 +263,47 @@ public class CanvasEnv : MonoBehaviour
             }
         }
         return false;
+    }
+
+    void FillEnvironment()
+    {
+        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+        {
+            if (Spots[i].taken)   // (canvas[i] == 1)
+                environment[i] = 1;
+            else// if (canvas[i] == 0)
+                environment[i] = 0;
+        }
+    }
+
+
+    int Convert(int smallArrayIndex)
+    {
+        int currentMatrix_X = 0;
+        int currentMatrix_Y;
+        int maxMatrix_X;
+        int maxMatrix_Y;
+        int lastCol = CURRENT_MATRIX_SIZE - 1;
+
+        //  This for loop is looking for x 
+        for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
+        {
+            if (smallArrayIndex <= lastCol)
+            {
+                currentMatrix_X = j;
+                break;
+            }
+            lastCol += CURRENT_MATRIX_SIZE;
+        }
+        currentMatrix_Y = smallArrayIndex - currentMatrix_X * CURRENT_MATRIX_SIZE;
+
+        // (40 - CANVAS_SIZE)/ 2
+        maxMatrix_X = currentMatrix_X + ((MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2);
+        maxMatrix_Y = currentMatrix_Y + ((MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2);
+
+        int bigArrayIndex = maxMatrix_X * MAX_MATRIX_SIZE + maxMatrix_Y;
+
+        return bigArrayIndex;
     }
 }
 
