@@ -65,7 +65,7 @@ public class CanvasEnv : MonoBehaviour
         //  Set the pixels on the canvas
         for (int i = 0; i < numAgents; i++)
         {
-            canvas[Convert(pictures[pictureIndex,i])] = 1;
+            canvas[Convert(pictures[pictureIndex, i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
         }
 
 
@@ -277,31 +277,30 @@ public class CanvasEnv : MonoBehaviour
     }
 
 
-    int Convert(int smallArrayIndex)
+    /// <summary>
+    /// The convert function:
+    /// takes the index of a small 1D array 
+    /// changes 
+    /// </summary>
+    /// <param name="smallArrayIndex"></param>
+    /// <returns></returns>
+    int Convert(int smallArrayIndex, int smallArraySize, int bigArraySize)
     {
-        int currentMatrix_X = 0;
+        int currentMatrix_X;
         int currentMatrix_Y;
         int maxMatrix_X;
         int maxMatrix_Y;
-        int lastCol = CURRENT_MATRIX_SIZE - 1;
 
-        //  This for loop is looking for x 
-        for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-        {
-            if (smallArrayIndex <= lastCol)
-            {
-                currentMatrix_X = j;
-                break;
-            }
-            lastCol += CURRENT_MATRIX_SIZE;
-        }
-        currentMatrix_Y = smallArrayIndex - currentMatrix_X * CURRENT_MATRIX_SIZE;
+        //  The idex of the small 1D array is converted into the indices of a 2D array in the same location
+        currentMatrix_X = smallArrayIndex / smallArraySize;
+        currentMatrix_Y = smallArrayIndex - currentMatrix_X * smallArraySize;
 
-        // (40 - CANVAS_SIZE)/ 2
-        maxMatrix_X = currentMatrix_X + ((MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2);
-        maxMatrix_Y = currentMatrix_Y + ((MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2);
+        // Now we make the small array bigger 
+        maxMatrix_X = currentMatrix_X + ((bigArraySize - smallArraySize) / 2);
+        maxMatrix_Y = currentMatrix_Y + ((bigArraySize - smallArraySize) / 2);
 
-        int bigArrayIndex = maxMatrix_X * MAX_MATRIX_SIZE + maxMatrix_Y;
+        //  The indices of the big 2D array is now converted into the index of a 1D array
+        int bigArrayIndex = maxMatrix_X * bigArraySize + maxMatrix_Y;
 
         return bigArrayIndex;
     }
