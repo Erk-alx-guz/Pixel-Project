@@ -35,17 +35,21 @@ public class PixelAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        int boundary = 0;
         //  Where the agent is
         sensor.AddObservation(pixel.transform.position);
 
-        for (int i = 0; i < env.size * env.size; i++)
+        for (int i = 0; i < env.big_size * env.big_size; i++)
         {
             //  The picture
             sensor.AddObservation(env.canvas[i]);
             //  The environment
             sensor.AddObservation(env.environment[i]);
         } 
-        sensor.AddObservation(env.OutOfBoundary());
+        if (env.OutOfBoundary())
+            boundary = 1;
+
+        sensor.AddObservation(boundary);
     }
 
 

@@ -20,7 +20,8 @@ public class CanvasEnv : MonoBehaviour
 
     const int MAX_MATRIX_SIZE = 40;
     const int CURRENT_MATRIX_SIZE = 10;
-    public int size = CURRENT_MATRIX_SIZE;
+    public int small_size = CURRENT_MATRIX_SIZE;
+    public int big_size = MAX_MATRIX_SIZE;
     float[] cordList = new float[CURRENT_MATRIX_SIZE];
     const float boundary = 11.25f;
     float startingCords = boundary;
@@ -68,8 +69,6 @@ public class CanvasEnv : MonoBehaviour
             canvas[Convert(pictures[pictureIndex, i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
         }
 
-        //  Fill environment with all the 1's it contains 
-        FillEnvironment();
 
         //  Fill the rest of canvas and environment with zeros
         for (int i = 0; i < MAX_MATRIX_SIZE; i++)
@@ -91,7 +90,7 @@ public class CanvasEnv : MonoBehaviour
         }
 
         StartCoroutine(SpotDrop());
-        InitPixel();
+        InitPixel();        
     }
 
     // Update is called once per frame
@@ -99,10 +98,13 @@ public class CanvasEnv : MonoBehaviour
     {
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
+            VisualizeImage();
+
+            FillEnvironment();
+
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
-            FillEnvironment();
         }
     }
 
@@ -247,6 +249,8 @@ public class CanvasEnv : MonoBehaviour
         return bigArrayIndex;
     }
 
+    //  Test functions
+
     /// <summary>
     /// Test function to see how well the pixels are being tracked
     /// </summary>
@@ -270,8 +274,6 @@ public class CanvasEnv : MonoBehaviour
             }
         }
     }
-
-    //  Test functions
 
     void VisualizeImage()
     {

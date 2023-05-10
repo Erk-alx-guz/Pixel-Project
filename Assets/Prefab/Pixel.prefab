@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 171341029822113239}
   - component: {fileID: 4542165988249419698}
   - component: {fileID: 2154488907740792386}
+  - component: {fileID: 1621987279061274035}
   m_Layer: 0
   m_Name: Pixel
   m_TagString: Pixel
@@ -290,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 1
+    VectorObservationSize: 3204
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -301,8 +302,8 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: My Behavior
+  m_BehaviorType: 1
+  m_BehaviorName: Pixel
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -324,6 +325,20 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   env: {fileID: 0}
+--- !u!114 &1621987279061274035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2635456003861847142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  TakeActionsBetweenDecisions: 1
 --- !u!1 &5701057837456231003
 GameObject:
   m_ObjectHideFlags: 0
