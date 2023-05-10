@@ -37,12 +37,15 @@ public class PixelAgent : Agent
     {
         //  Where the agent is
         sensor.AddObservation(pixel.transform.position);
-        //  The picture
-        for (int i = 0;i < env.size * env.size; i++)
+
+        for (int i = 0; i < env.size * env.size; i++)
+        {
+            //  The picture
             sensor.AddObservation(env.canvas[i]);
-
-        //  Maybe whats taken?
-
+            //  The environment
+            sensor.AddObservation(env.environment[i]);
+        } 
+        sensor.AddObservation(env.OutOfBoundary());
     }
 
 
@@ -55,23 +58,6 @@ public class PixelAgent : Agent
 
         pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
         pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
-
-        //var i = -1;
-        //var inputAction = actionsOut.ContinuousActions;
-
-        //inputAction[0] = upperX;
-        //inputAction[1] = lowerX;
-        //inputAction[2] = strength;
-
-        //var bpDict = m_JdController.bodyPartsDict;
-
-        //bpDict[Upper].SetJointTargetRotation(inputAction[++i], 0, 0);
-        //bpDict[Lower].SetJointTargetRotation(inputAction[++i], 0, 0);
-
-        //foreach (var bodyPart in bpDict.Keys)
-        //{
-        //    bpDict[bodyPart].SetJointStrength(strength);
-        //}
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -86,8 +72,6 @@ public class PixelAgent : Agent
             pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
             pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
         }
-
-        
         
         //  REWARDS
         

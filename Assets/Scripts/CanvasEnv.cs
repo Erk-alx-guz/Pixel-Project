@@ -68,14 +68,19 @@ public class CanvasEnv : MonoBehaviour
             canvas[Convert(pictures[pictureIndex, i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
         }
 
+        //  Fill environment with all the 1's it contains 
+        FillEnvironment();
 
-        //  Fill the rest of the canvas with zeros
+        //  Fill the rest of canvas and environment with zeros
         for (int i = 0; i < MAX_MATRIX_SIZE; i++)
         {
             for (int j = 0; j < MAX_MATRIX_SIZE; j++)
             {
                 if (canvas[i * MAX_MATRIX_SIZE + j] != 1)
                     canvas[i * MAX_MATRIX_SIZE + j] = 0;
+
+                if (environment[i * MAX_MATRIX_SIZE + j] != 1)
+                    environment[i * MAX_MATRIX_SIZE + j] = 0;
             }
         }
 
@@ -89,6 +94,51 @@ public class CanvasEnv : MonoBehaviour
         InitPixel();
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        if (EnvironmentReady())  //  The environment must be set up befor doing anything
+        {
+            //  Environment reward
+            for (int i = 0; i < numAgents; ++i)
+                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
+            FillEnvironment();
+        }
+    }
+
+    /// <summary>
+    /// Used to check if any pixels are outside of the area they are allowd to be in
+    /// </summary>
+    /// <returns></returns>
+    public bool OutOfBoundary()
+    {
+        //  check all pixels are with in the set area
+        //  check pixel transforms
+
+        //  1.235 diff
+        //    if pixelObject[0].transform.position.x > 12.485 || pixelObject[0].transform.position.x < -12.485 then pixel is out
+        //    if pixelObject[0].transform.position.z > 12.485 || pixelObject[0].transform.position.z < -12.485 then pixel is out
+        for (int i = 0; i < numAgents; i++)
+        {
+            if (pixelObject[i].transform.position.x > boundary + 1.235f || pixelObject[i].transform.position.x < -1 * boundary - 1.235
+                || pixelObject[i].transform.position.z > boundary + 1.235f || pixelObject[i].transform.position.z < -1 * boundary - 1.235
+                || pixelObject[i].transform.position.y < 0)
+            {
+                //  then pixel is out
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /// <summary>
+    /// Used to check the grid is ready
+    /// </summary>
+    public bool EnvironmentReady()
+    {
+        return GridSquares.Count == Mathf.Pow(CURRENT_MATRIX_SIZE, 2);
+    }
 
     //  Spawn all grid squares
     IEnumerator SpotDrop()
@@ -101,60 +151,6 @@ public class CanvasEnv : MonoBehaviour
                 Spots[i * CURRENT_MATRIX_SIZE + j] = GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<InSpot>();
 
                 yield return new WaitForSeconds(0f);
-            }
-        }
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (EnvironmentReady())  //  The environment must be set up befor doing anything
-        {
-            //  Environment reward
-            for (int i = 0; i < numAgents; ++i)
-                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
-            VisualizeImage();
-        }
-    }
-
-
-    /// <summary>
-    /// Test function to see how well the pixels are being tracked
-    /// </summary>
-    void VisualizePixelTracking()
-    {
-        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
-        {
-            if (Spots[i].taken)   // (canvas[i] == 1)
-                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-            else// if (canvas[i] == 0)
-                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
-        }
-
-        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
-        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
-        {
-            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-            {
-                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-            }
-        }
-    }
-
-
-    void VisualizeImage()
-    {
-        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
-
-        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
-        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
-        {
-            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-            {
-                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1) 
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
             }
         }
     }
@@ -191,15 +187,6 @@ public class CanvasEnv : MonoBehaviour
         }
     }
 
-
-    /// <summary>
-    /// Used to check the grid is ready
-    /// </summary>
-    public bool EnvironmentReady()
-    {
-        return GridSquares.Count == Mathf.Pow(CURRENT_MATRIX_SIZE, 2);
-    }
-
     /// <summary>
     /// Checks what spots are taken on the picture by pixel agents
     /// </summary>
@@ -215,74 +202,29 @@ public class CanvasEnv : MonoBehaviour
         return takenSpots;
     }
 
-
     /// <summary>
-    /// This function converts the locations of the shape in pictures into 
-    /// two indexes that can be used to spawnd the agents in the shape chosen
-    /// in the pictures array.
-    /// 
-    /// This is only a test function
+    /// Fill an array of how the canvas looks with all the agents on it
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    void ToIndex(int index,ref int x,ref int y)
-    {
-        string snum = index.ToString();
-
-        if (snum.Length == 1)
-            x = snum[0] - 48;
-        else if (snum.Length == 2)
-        {
-            x = snum[0] - 48;
-            y = snum[1] - 48;
-        }
-    }
-
-
-    /// <summary>
-    /// Used to check if any pixels are outside of the area they are allowd to be in
-    /// </summary>
-    /// <returns></returns>
-    bool OutOfBoundary()
-    {
-        //  check all pixels are with in the set area
-        //  check pixel transforms
-
-        //  1.235 diff
-        //    if pixelObject[0].transform.position.x > 12.485 || pixelObject[0].transform.position.x < -12.485 then pixel is out
-        //    if pixelObject[0].transform.position.z > 12.485 || pixelObject[0].transform.position.z < -12.485 then pixel is out
-        for (int i = 0; i < numAgents; i++)
-        {
-            if (pixelObject[i].transform.position.x > boundary + 1.235f || pixelObject[i].transform.position.x < -1 * boundary - 1.235
-                || pixelObject[i].transform.position.z > boundary + 1.235f || pixelObject[i].transform.position.z < -1 * boundary - 1.235 
-                || pixelObject[i].transform.position.y < 0)
-            {
-                //  then pixel is out
-                return true;
-            }
-        }
-        return false;
-    }
-
     void FillEnvironment()
     {
         for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
         {
-            if (Spots[i].taken)   // (canvas[i] == 1)
-                environment[i] = 1;
-            else// if (canvas[i] == 0)
-                environment[i] = 0;
+            if (Spots[i].taken)                                                            //  Check if the a grid square is taken in the smaller array
+                environment[Convert(i, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;         //  keep track of what is taken in the bigger array
+            else                                                                           //  it is not taken so set a ZERO
+                environment[Convert(i, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;
         }
     }
 
-
     /// <summary>
+    /// 
     /// The convert function:
-    /// takes the index of a small 1D array 
-    /// changes 
+    /// Maps a small array onto a bigger array
+    /// 
     /// </summary>
     /// <param name="smallArrayIndex"></param>
+    /// <param name="smallArraySize"></param>
+    /// <param name="bigArraySize"></param>
     /// <returns></returns>
     int Convert(int smallArrayIndex, int smallArraySize, int bigArraySize)
     {
@@ -303,6 +245,70 @@ public class CanvasEnv : MonoBehaviour
         int bigArrayIndex = maxMatrix_X * bigArraySize + maxMatrix_Y;
 
         return bigArrayIndex;
+    }
+
+    /// <summary>
+    /// Test function to see how well the pixels are being tracked
+    /// </summary>
+    void VisualizePixelTracking()
+    {
+        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+        {
+            if (Spots[i].taken)   // (canvas[i] == 1)
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            else// if (canvas[i] == 0)
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+        }
+
+        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
+        {
+            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
+            {
+                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            }
+        }
+    }
+
+    //  Test functions
+
+    void VisualizeImage()
+    {
+        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
+
+        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
+        {
+            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
+            {
+                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// This function converts the locations of the shape in pictures into 
+    /// two indexes that can be used to spawnd the agents in the shape chosen
+    /// in the pictures array.
+    /// 
+    /// This is only a test function
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    void ToIndex(int index, ref int x, ref int y)
+    {
+        string snum = index.ToString();
+
+        if (snum.Length == 1)
+            x = snum[0] - 48;
+        else if (snum.Length == 2)
+        {
+            x = snum[0] - 48;
+            y = snum[1] - 48;
+        }
     }
 }
 
