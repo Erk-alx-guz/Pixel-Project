@@ -155,10 +155,11 @@ public class CanvasEnv : MonoBehaviour
 
         if (OutOfBoundary())
         {
+            resetTimer = 0;
 
             for (int i = 0; i < numAgents; i++)
             {
-                pixelAgent[i].AddReward(-10f);
+                pixelAgent[i].AddReward(-1f);
                 pixelAgent[i].EndEpisode();
 
                 InitPixel();
@@ -319,9 +320,9 @@ public class CanvasEnv : MonoBehaviour
         for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
         {
             if (Spots[i].taken)   // (canvas[i] == 1)
-                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-            else// if (canvas[i] == 0)
-                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255);
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);                                 //  Where the pixel is 
+            else// not taken
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);                                 //  Where there are no pixels or targets
         }
 
         int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
@@ -330,7 +331,7 @@ public class CanvasEnv : MonoBehaviour
             for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
                 if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);     //  Where the targets are
             }
         }
     }
@@ -345,7 +346,7 @@ public class CanvasEnv : MonoBehaviour
             for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
                 if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);                
             }
         }
     }

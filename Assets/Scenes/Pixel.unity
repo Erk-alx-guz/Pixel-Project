@@ -3751,7 +3751,7 @@ MonoBehaviour:
   - {fileID: 892993087}
   - {fileID: 1498387910}
   Spot: {fileID: 4143830508264377102, guid: 691f653d6b648754a8348d1ed46c1ffe, type: 3}
-  MaxEnvironmentSteps: 1000
+  MaxEnvironmentSteps: 10000
 --- !u!1 &510340730
 GameObject:
   m_ObjectHideFlags: 0
@@ -4024,7 +4024,7 @@ PrefabInstance:
     - target: {fileID: 2154488907740792386, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
       propertyPath: MaxStep
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2154488907740792386, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
@@ -4302,7 +4302,7 @@ PrefabInstance:
     - target: {fileID: 2154488907740792386, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
       propertyPath: MaxStep
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2154488907740792386, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
