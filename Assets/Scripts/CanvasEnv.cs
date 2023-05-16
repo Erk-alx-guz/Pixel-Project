@@ -50,7 +50,7 @@ public class CanvasEnv : MonoBehaviour
     //  Array of the Agent scripts to 
     public PixelAgent[] pixelAgent = new PixelAgent[numAgents];
 
-    public GameObject[] pixelObject = new GameObject[numAgents];
+    public Rigidbody[] pixel_RB = new Rigidbody[numAgents];
 
     public GameObject Spot;
 
@@ -59,6 +59,13 @@ public class CanvasEnv : MonoBehaviour
     List<GameObject> GridSquares = new List<GameObject>();
 
     InSpot[] Spots = new InSpot[CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE];
+
+    private int resetTimer;
+
+    [Header("Max Steps")]
+    [Space(10)]
+
+    public int MaxEnvironmentSteps;
 
     // Start is called before the first frame update
     void Start()
@@ -90,8 +97,15 @@ public class CanvasEnv : MonoBehaviour
         }
 
         StartCoroutine(SpotDrop());
-        InitPixel();        
+        InitPixel();     
+        
+        resetTimer = 0;
     }
+
+    //// User input
+    //private float speed = 0.1f;
+    //private float horizontalInput;
+    //private float forwardInput;
 
     // Update is called once per frame
     void Update()
@@ -105,8 +119,53 @@ public class CanvasEnv : MonoBehaviour
             //  Environment reward
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
+
+            //// This is for player input
+            //horizontalInput = Input.GetAxis("Horizontal");
+            //forwardInput = Input.GetAxis("Vertical");
+
+
+            ////  Test that individual pixels could be tacked and moved
+            ////  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+            ////if (Pixels.Count > 2 && Pixels.Count == pixelCount) //  Making sure the pixel exists and don't let it move until all pixels have been spawned
+            //pixelAgent[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
+            //pixelAgent[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+
+            //print(pixel_RB[0].velocity.x);
+            ////  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ////  Test that individual pixels could be tacked and moved
         }
     }
+
+    void FixedUpdate()
+    {
+        resetTimer += 1;
+        //Debug.Log(resetTimer.ToString());
+        if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
+        {
+            resetTimer = 0;
+
+            for (int i = 0; i < numAgents; i++)
+                pixelAgent[i].EndEpisode();
+
+
+            InitPixel();
+        }
+
+        if (OutOfBoundary())
+        {
+
+            for (int i = 0; i < numAgents; i++)
+            {
+                pixelAgent[i].AddReward(-10f);
+                pixelAgent[i].EndEpisode();
+
+                InitPixel();
+            }
+        }
+    }
+
 
     /// <summary>
     /// Used to check if any pixels are outside of the area they are allowd to be in
@@ -122,9 +181,9 @@ public class CanvasEnv : MonoBehaviour
         //    if pixelObject[0].transform.position.z > 12.485 || pixelObject[0].transform.position.z < -12.485 then pixel is out
         for (int i = 0; i < numAgents; i++)
         {
-            if (pixelObject[i].transform.position.x > boundary + 1.235f || pixelObject[i].transform.position.x < -1 * boundary - 1.235
-                || pixelObject[i].transform.position.z > boundary + 1.235f || pixelObject[i].transform.position.z < -1 * boundary - 1.235
-                || pixelObject[i].transform.position.y < 0)
+            if (pixel_RB[i].transform.position.x > boundary + 1.235f || pixel_RB[i].transform.position.x < -1 * boundary - 1.235
+                || pixel_RB[i].transform.position.z > boundary + 1.235f || pixel_RB[i].transform.position.z < -1 * boundary - 1.235
+                || pixel_RB[i].transform.position.y < 0)
             {
                 //  then pixel is out
                 return true;
@@ -179,8 +238,9 @@ public class CanvasEnv : MonoBehaviour
 
             spotTaken[key] = true;
 
-            pixelObject[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
-            pixelAgent[i] = pixelObject[i].GetComponent<PixelAgent>();
+            pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+
 
             ////Test mode
             //ToIndex(pictures[pictureIndex, i], ref xPos, ref zPos);

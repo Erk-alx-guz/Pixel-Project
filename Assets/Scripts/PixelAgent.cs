@@ -31,6 +31,7 @@ public class PixelAgent : Agent
     {
         //  Maybe set velocity to zero
         pixel_RB.velocity = Vector3.zero;
+        pixel_RB.rotation = Quaternion.identity;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -39,13 +40,11 @@ public class PixelAgent : Agent
         //  Where the agent is
         sensor.AddObservation(pixel.transform.position);
 
-        for (int i = 0; i < env.big_size * env.big_size; i++)
-        {
-            //  The picture
-            sensor.AddObservation(env.canvas[i]);
-            //  The environment
-            sensor.AddObservation(env.environment[i]);
-        } 
+        //  The picture
+        sensor.AddObservation(env.canvas);
+        //  The environment
+        sensor.AddObservation(env.environment);
+
         if (env.OutOfBoundary())
             boundary = 1;
 
@@ -82,5 +81,13 @@ public class PixelAgent : Agent
         //  filling a pixel on the picture
 
         //  Don't get out of the canvas
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 9 || Mathf.Abs(pixel_RB.velocity.z) > 9))
+        {
+            AddReward(-0.5f);
+        }
     }
 }
