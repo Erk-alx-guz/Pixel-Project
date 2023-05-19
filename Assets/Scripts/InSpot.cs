@@ -13,12 +13,6 @@ public class InSpot : MonoBehaviour
         coll = GetComponent<Collider>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void OnTriggerStay(Collider other)
     {
         if (other.tag == "Pixel")

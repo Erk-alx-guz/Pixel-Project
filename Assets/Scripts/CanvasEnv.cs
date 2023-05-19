@@ -120,6 +120,8 @@ public class CanvasEnv : MonoBehaviour
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
+            print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
+
             //// This is for player input
             //horizontalInput = Input.GetAxis("Horizontal");
             //forwardInput = Input.GetAxis("Vertical");
@@ -209,7 +211,7 @@ public class CanvasEnv : MonoBehaviour
         {
             for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
-                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.125f, cordList[j]), Quaternion.identity));
+                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.525f, cordList[j]), Quaternion.identity));
                 Spots[i * CURRENT_MATRIX_SIZE + j] = GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<InSpot>();
 
                 yield return new WaitForSeconds(0f);
@@ -239,7 +241,7 @@ public class CanvasEnv : MonoBehaviour
 
             spotTaken[key] = true;
 
-            pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+            pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
 
 

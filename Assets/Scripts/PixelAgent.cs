@@ -17,7 +17,7 @@ public class PixelAgent : Agent
     Rigidbody pixel_RB;
 
     // User input
-    private float speed = 40.0f;
+    private float speed = 2.0f;
     private float horizontalInput;
     private float forwardInput;
 
@@ -83,11 +83,18 @@ public class PixelAgent : Agent
         //  Don't get out of the canvas
     }
 
+
+    /// <summary>
+    /// When hitting another pixel at a fasl velocity give bad reward
+    /// 
+    /// This is to prevent pixels from flipping 
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 9 || Mathf.Abs(pixel_RB.velocity.z) > 9))
+        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
         {
-            AddReward(-0.5f);
+            AddReward(-5f);
         }
     }
 }
