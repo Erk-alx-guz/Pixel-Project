@@ -20,11 +20,15 @@ public class InSpot : MonoBehaviour
             if(coll.bounds.Contains(other.bounds.center)) // && coll.bounds.Contains(other.bounds.min))
             {
                 taken = true;
+
+                //print(gameObject.tag);
             }
             else
             {
                 taken = false;
             }
         }
+
+
     }
 }

@@ -102,10 +102,10 @@ public class CanvasEnv : MonoBehaviour
         resetTimer = 0;
     }
 
-    //// User input
-    //private float speed = 0.1f;
-    //private float horizontalInput;
-    //private float forwardInput;
+    // User input
+    private float speed = 1f;
+    private float horizontalInput;
+    private float forwardInput;
 
     // Update is called once per frame
     void Update()
@@ -120,19 +120,18 @@ public class CanvasEnv : MonoBehaviour
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
-            print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
+            //print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
-            //// This is for player input
-            //horizontalInput = Input.GetAxis("Horizontal");
-            //forwardInput = Input.GetAxis("Vertical");
+            // This is for player input
+            horizontalInput = Input.GetAxis("Horizontal");
+            forwardInput = Input.GetAxis("Vertical");
 
 
             ////  Test that individual pixels could be tacked and moved
             ////  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-            ////if (Pixels.Count > 2 && Pixels.Count == pixelCount) //  Making sure the pixel exists and don't let it move until all pixels have been spawned
-            //pixelAgent[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-            //pixelAgent[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+            pixelAgent[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
+            pixelAgent[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
 
             //print(pixel_RB[0].velocity.x);
             ////  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -207,12 +206,27 @@ public class CanvasEnv : MonoBehaviour
     //  Spawn all grid squares
     IEnumerator SpotDrop()
     {
+        int index;
         for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
         {
             for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
-                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.525f, cordList[j]), Quaternion.identity));
-                Spots[i * CURRENT_MATRIX_SIZE + j] = GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<InSpot>();
+                index = i * CURRENT_MATRIX_SIZE + j;
+
+                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.525f, cordList[j]), Quaternion.identity));             //  gameObject
+
+                if (index < 10)
+                {
+                    UnityEditorInternal.InternalEditorUtility.AddTag('0' + index.ToString());
+                    GridSquares[index].tag = '0' + index.ToString();
+                }
+                else
+                {
+                    UnityEditorInternal.InternalEditorUtility.AddTag(index.ToString());
+                    GridSquares[index].tag = index.ToString();
+                }
+
+                Spots[index] = GridSquares[index].GetComponent<InSpot>();               //  script
 
                 yield return new WaitForSeconds(0f);
             }

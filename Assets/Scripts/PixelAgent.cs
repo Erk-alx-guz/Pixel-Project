@@ -21,6 +21,13 @@ public class PixelAgent : Agent
     private float horizontalInput;
     private float forwardInput;
 
+    Collider coll;
+
+    void Start()
+    {
+        coll = GetComponent<Collider>();
+    }
+
     public override void Initialize()
     {
         pixel = gameObject;
@@ -92,9 +99,36 @@ public class PixelAgent : Agent
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
+        //if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
+        //{
+        //    AddReward(-5f);
+        //}
+
+        //if (!collision.transform.CompareTag("Pixel"))
+        //{
+        //    if (collision.bounds.Contains(collision.GetContact))
+        //    {
+
+        //    }
+        //}
+
+        //if (Is)
+
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        int gridLocation;
+        if (other.tag != "Pixel")
         {
-            AddReward(-5f);
+            if (other.bounds.Contains(coll.bounds.center))
+            {
+                gridLocation = (other.tag[0] - 48) * 10;
+                gridLocation += other.tag[1] - 48;
+
+                print(gridLocation);
+            }
         }
     }
 }
