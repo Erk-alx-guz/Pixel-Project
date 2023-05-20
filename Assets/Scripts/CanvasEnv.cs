@@ -37,14 +37,15 @@ public class CanvasEnv : MonoBehaviour
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
-    int[,] pictures = { { 03, 59}       
-                      , { 47, 09}   
-                      , { 51, 34}    
-                      , { 11, 43}    
-                      , { 06, 60}    
-                      , { 34, 19}     
-                      , { 60, 36}    
-                      , { 27, 28} };
+    //  10 X 10 std.
+    int[,] pictures = { { 03, 59}       // 0
+                      , { 47, 09}       // 1
+                      , { 51, 34}       // 2
+                      , { 11, 43}       // 3
+                      , { 06, 60}       // 4
+                      , { 34, 19}       // 5
+                      , { 60, 36}       // 6
+                      , { 27, 28} };    // 7
 
 
     //  Array of the Agent scripts to 
@@ -57,8 +58,6 @@ public class CanvasEnv : MonoBehaviour
     //  List holding all grid squares
 
     List<GameObject> GridSquares = new List<GameObject>();
-
-    InSpot[] Spots = new InSpot[CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE];
 
     private int resetTimer;
 
@@ -102,10 +101,10 @@ public class CanvasEnv : MonoBehaviour
         resetTimer = 0;
     }
 
-    // User input
-    private float speed = 1f;
-    private float horizontalInput;
-    private float forwardInput;
+    //// User input
+    //private float speed = 1f;
+    //private float horizontalInput;
+    //private float forwardInput;
 
     // Update is called once per frame
     void Update()
@@ -122,16 +121,16 @@ public class CanvasEnv : MonoBehaviour
 
             //print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
-            // This is for player input
-            horizontalInput = Input.GetAxis("Horizontal");
-            forwardInput = Input.GetAxis("Vertical");
+            //// This is for player input
+            //horizontalInput = Input.GetAxis("Horizontal");
+            //forwardInput = Input.GetAxis("Vertical");
 
 
-            ////  Test that individual pixels could be tacked and moved
-            ////  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+            //////  Test that individual pixels could be tacked and moved
+            //////  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-            pixelAgent[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-            pixelAgent[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+            //pixelAgent[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
+            //pixelAgent[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
 
             //print(pixel_RB[0].velocity.x);
             ////  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -226,8 +225,6 @@ public class CanvasEnv : MonoBehaviour
                     GridSquares[index].tag = index.ToString();
                 }
 
-                Spots[index] = GridSquares[index].GetComponent<InSpot>();               //  script
-
                 yield return new WaitForSeconds(0f);
             }
         }
@@ -275,8 +272,11 @@ public class CanvasEnv : MonoBehaviour
         int takenSpots = 0;
         for (int i = 0; i < numAgents; i++)
         {
-            if (Spots[pictures[pictureIndex,i]].taken)
-                takenSpots++;
+            for (int j = 0; j < numAgents; j++)
+            {
+                if (pixelAgent[i].gridLocation == pictures[pictureIndex, j])
+                    takenSpots++;
+            }
         }
         return takenSpots;
     }
@@ -286,12 +286,13 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void FillEnvironment()
     {
-        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+        for (int i = 0; i < numAgents; i++)
+            environment[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;     //  keep track of what is taken in the bigger array
+
+        for (int j = 0; j < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; j++)
         {
-            if (Spots[i].taken)                                                            //  Check if the a grid square is taken in the smaller array
-                environment[Convert(i, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;         //  keep track of what is taken in the bigger array
-            else                                                                           //  it is not taken so set a ZERO
-                environment[Convert(i, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;
+            if (environment[Convert(j, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] != 1) //  it is not taken so set a ZERO
+                environment[Convert(j, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;
         }
     }
 
@@ -331,26 +332,36 @@ public class CanvasEnv : MonoBehaviour
     /// <summary>
     /// Test function to see how well the pixels are being tracked
     /// </summary>
-    void VisualizePixelTracking()
-    {
-        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
-        {
-            if (Spots[i].taken)   // (canvas[i] == 1)
-                GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);                                 //  Where the pixel is 
-            else// not taken
-                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);                                 //  Where there are no pixels or targets
-        }
+    //void VisualizePixelTracking()
+    //{
+    //    for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+    //    {
+    //        if (Spots[i].taken)   // (canvas[i] == 1)
+    //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);                                 //  Where the pixel is 
+    //        else// not taken
+    //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);                                 //  Where there are no pixels or targets
+    //    }
 
-        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
-        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
-        {
-            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-            {
-                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);     //  Where the targets are
-            }
-        }
-    }
+    //    for (int i = 0; i < numAgents; ++i)
+    //        GridSquares[pixelAgent[i].gridLocation].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);
+
+    //    for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+    //    {
+    //        if ()
+    //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);   //    not taken                  //  Where there are no pixels or targets
+    //    }
+
+
+    //    int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+    //    for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
+    //    {
+    //        for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
+    //        {
+    //            if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
+    //                GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);     //  Where the targets are
+    //        }
+    //    }
+    //}
 
     void VisualizeImage()
     {

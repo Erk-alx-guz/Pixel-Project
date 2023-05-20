@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 131167806950017320}
   - component: {fileID: 5246831591402339522}
   - component: {fileID: 5070099564279184861}
-  - component: {fileID: 6047883245289637381}
   m_Layer: 0
   m_Name: GridSquare
   m_TagString: GridSquare
@@ -106,16 +105,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6047883245289637381
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4143830508264377102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf2a29a46566ac489d26a3dfaa6ec62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  taken: 0

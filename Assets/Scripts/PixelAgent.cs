@@ -21,6 +21,7 @@ public class PixelAgent : Agent
     private float horizontalInput;
     private float forwardInput;
 
+    public int gridLocation;
     Collider coll;
 
     void Start()
@@ -99,27 +100,15 @@ public class PixelAgent : Agent
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        //if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
-        //{
-        //    AddReward(-5f);
-        //}
-
-        //if (!collision.transform.CompareTag("Pixel"))
-        //{
-        //    if (collision.bounds.Contains(collision.GetContact))
-        //    {
-
-        //    }
-        //}
-
-        //if (Is)
-
+        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
+        {
+            AddReward(-5f);
+        }
     }
 
 
     private void OnTriggerStay(Collider other)
     {
-        int gridLocation;
         if (other.tag != "Pixel")
         {
             if (other.bounds.Contains(coll.bounds.center))
