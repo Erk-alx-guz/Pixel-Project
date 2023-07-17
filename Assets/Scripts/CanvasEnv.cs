@@ -111,7 +111,9 @@ public class CanvasEnv : MonoBehaviour
     {
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
-            VisualizeImage();
+            //VisualizeImage();
+
+            VisualizePixelTracking();
 
             FillEnvironment();
 
@@ -212,7 +214,7 @@ public class CanvasEnv : MonoBehaviour
             {
                 index = i * CURRENT_MATRIX_SIZE + j;
 
-                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.525f, cordList[j]), Quaternion.identity));             //  gameObject
+                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.65f, cordList[j]), Quaternion.identity));             //  gameObject
 
                 if (index < 10)
                 {
@@ -332,40 +334,31 @@ public class CanvasEnv : MonoBehaviour
     /// <summary>
     /// Test function to see how well the pixels are being tracked
     /// </summary>
-    //void VisualizePixelTracking()
-    //{
-    //    for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
-    //    {
-    //        if (Spots[i].taken)   // (canvas[i] == 1)
-    //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);                                 //  Where the pixel is 
-    //        else// not taken
-    //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);                                 //  Where there are no pixels or targets
-    //    }
-
-    //    for (int i = 0; i < numAgents; ++i)
-    //        GridSquares[pixelAgent[i].gridLocation].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);
-
-    //    for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
-    //    {
-    //        if ()
-    //            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);   //    not taken                  //  Where there are no pixels or targets
-    //    }
-
-
-    //    int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
-    //    for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
-    //    {
-    //        for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-    //        {
-    //            if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-    //                GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);     //  Where the targets are
-    //        }
-    //    }
-    //}
-
-    void VisualizeImage()
+    void VisualizePixelTracking()
     {
-        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
+        HashSet<int> agent_loc = new HashSet<int>();
+        //for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+        //{
+        //    if (Spots[i].taken)   // (canvas[i] == 1)
+        //        GridSquares[i].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);                                 //  Where the pixel is 
+        //    else// not taken
+        //        GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);                                 //  Where there are no pixels or targets
+        //}
+
+        agent_loc.Clear();
+
+        for (int i = 0; i < numAgents; ++i)
+        {
+            GridSquares[pixelAgent[i].gridLocation].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);
+            agent_loc.Add(pixelAgent[i].gridLocation);
+        }
+
+        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+        {
+            if (!agent_loc.Contains(i))
+                GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 255, 255, 0.75f);   //    not taken                  //  Where there are no pixels or targets
+        }
+
 
         int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
         for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
@@ -373,10 +366,25 @@ public class CanvasEnv : MonoBehaviour
             for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
             {
                 if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);                
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);     //  Where the targets are
             }
         }
     }
+
+    //void VisualizeImage()
+    //{
+    //    //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
+
+    //    int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+    //    for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
+    //    {
+    //        for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
+    //        {
+    //            if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
+    //                GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);                
+    //        }
+    //    }
+    //}
 
     /// <summary>
     /// This function converts the locations of the shape in pictures into 
