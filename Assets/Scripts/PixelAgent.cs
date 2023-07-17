@@ -23,6 +23,7 @@ public class PixelAgent : Agent
 
     public int gridLocation;
     Collider coll;
+ 
 
     void Start()
     {
@@ -116,7 +117,7 @@ public class PixelAgent : Agent
                 gridLocation = (other.tag[0] - 48) * 10;
                 gridLocation += other.tag[1] - 48;
 
-                print(gridLocation);
+               // print(gridLocation);
             }
         }
     }
