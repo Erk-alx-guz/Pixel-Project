@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -111,9 +112,9 @@ public class CanvasEnv : MonoBehaviour
     {
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
-            //VisualizeImage();
+            VisualizeImage();
 
-            VisualizePixelTracking();
+            //VisualizePixelTracking();
 
             FillEnvironment();
 
@@ -121,7 +122,8 @@ public class CanvasEnv : MonoBehaviour
             for (int i = 0; i < numAgents; ++i)
                 pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
-            //print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
+
+            print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
 
             //// This is for player input
             //horizontalInput = Input.GetAxis("Horizontal");
@@ -246,22 +248,25 @@ public class CanvasEnv : MonoBehaviour
         {
             do
             {
-                xPos = Random.Range(0, CURRENT_MATRIX_SIZE);
-                zPos = Random.Range(0, CURRENT_MATRIX_SIZE);
+                xPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
+                zPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
                 key = string.Format("{0:N2}", xPos);
                 key += string.Format("{0:N2}", zPos);
             } while (spotTaken[key] != null);           //  check if the location is taken 
 
             spotTaken[key] = true;
 
-            pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
-            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
-
-
-            ////Test mode
-            //ToIndex(pictures[pictureIndex, i], ref xPos, ref zPos);
-            //pixelObject[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
-            //pixelAgent[i] = pixelObject[i].GetComponent<PixelAgent>();
+            //if (xPos % 2 == 0 && zPos % 2 == 0)
+            //{
+                ToIndex(pictures[pictureIndex, i], ref xPos, ref zPos);
+                pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
+                pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+            //}
+            //else
+            //{
+            //    pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
+            //    pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+            //}
         }
     }
 
@@ -271,15 +276,20 @@ public class CanvasEnv : MonoBehaviour
     /// <returns></returns>
     int TakenSpots()
     {
+        HashSet<int> spotTaken = new HashSet<int>();
         int takenSpots = 0;
         for (int i = 0; i < numAgents; i++)
         {
             for (int j = 0; j < numAgents; j++)
             {
-                if (pixelAgent[i].gridLocation == pictures[pictureIndex, j])
+                if (pixelAgent[i].gridLocation == pictures[pictureIndex, j] && !spotTaken.Contains(pictures[pictureIndex, j]))
+                {
                     takenSpots++;
+                    spotTaken.Add(pictures[pictureIndex, j]);
+                }
             }
         }
+        spotTaken.Clear();
         return takenSpots;
     }
 
@@ -371,20 +381,20 @@ public class CanvasEnv : MonoBehaviour
         }
     }
 
-    //void VisualizeImage()
-    //{
-    //    //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
+    void VisualizeImage()
+    {
+        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
 
-    //    int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
-    //    for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
-    //    {
-    //        for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-    //        {
-    //            if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-    //                GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);                
-    //        }
-    //    }
-    //}
+        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
+        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
+        {
+            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
+            {
+                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
+                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
+            }
+        }
+    }
 
     /// <summary>
     /// This function converts the locations of the shape in pictures into 
