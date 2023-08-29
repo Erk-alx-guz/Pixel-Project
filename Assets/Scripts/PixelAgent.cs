@@ -103,7 +103,7 @@ public class PixelAgent : Agent
     {
         if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
         {
-            AddReward(-5f);
+            AddReward(-2);
         }
     }
 

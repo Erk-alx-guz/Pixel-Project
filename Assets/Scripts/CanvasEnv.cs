@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.MLAgents;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -24,10 +25,10 @@ public class CanvasEnv : MonoBehaviour
     public int small_size = CURRENT_MATRIX_SIZE;
     public int big_size = MAX_MATRIX_SIZE;
     float[] cordList = new float[CURRENT_MATRIX_SIZE];
-    const float boundary = 11.25f;
-    float startingCords = boundary;
+    const float BOUNDARY = 11.25f;
+    float startingCords = BOUNDARY;
 
-    const int numAgents = 2;
+    const int NUMBER_OF_AGENTS = 2;
 
     //  Matrix of how the environment looks
     public float[] environment = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
@@ -50,9 +51,9 @@ public class CanvasEnv : MonoBehaviour
 
 
     //  Array of the Agent scripts to 
-    public PixelAgent[] pixelAgent = new PixelAgent[numAgents];
+    public PixelAgent[] pixelAgent = new PixelAgent[NUMBER_OF_AGENTS];
 
-    public Rigidbody[] pixel_RB = new Rigidbody[numAgents];
+    public Rigidbody[] pixel_RB = new Rigidbody[NUMBER_OF_AGENTS];
 
     public GameObject Spot;
 
@@ -67,11 +68,13 @@ public class CanvasEnv : MonoBehaviour
 
     public int MaxEnvironmentSteps;
 
+    private SimpleMultiAgentGroup m_AgentGroup;
+
     // Start is called before the first frame update
     void Start()
     {
         //  Set the pixels on the canvas
-        for (int i = 0; i < numAgents; i++)
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             canvas[Convert(pictures[pictureIndex, i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
         }
@@ -97,8 +100,15 @@ public class CanvasEnv : MonoBehaviour
         }
 
         StartCoroutine(SpotDrop());
-        InitPixel();     
-        
+        InitPixel();
+
+        m_AgentGroup = new SimpleMultiAgentGroup();
+        foreach (var agent in pixelAgent)
+        {
+            // Add to team manager
+            m_AgentGroup.RegisterAgent(agent);
+        }
+
         resetTimer = 0;
     }
 
@@ -119,11 +129,11 @@ public class CanvasEnv : MonoBehaviour
             FillEnvironment();
 
             //  Environment reward
-            for (int i = 0; i < numAgents; ++i)
-                pixelAgent[i].AddReward(Mathf.Pow((float)TakenSpots() / numAgents, 2));
+            for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+                m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenSpots() / NUMBER_OF_AGENTS, 2));
 
 
-            print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / numAgents, 2));
+            print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / NUMBER_OF_AGENTS, 2));
 
             //// This is for player input
             //horizontalInput = Input.GetAxis("Horizontal");
@@ -150,10 +160,7 @@ public class CanvasEnv : MonoBehaviour
         {
             resetTimer = 0;
 
-            for (int i = 0; i < numAgents; i++)
-                pixelAgent[i].EndEpisode();
-
-
+            m_AgentGroup.GroupEpisodeInterrupted();
             InitPixel();
         }
 
@@ -161,11 +168,11 @@ public class CanvasEnv : MonoBehaviour
         {
             resetTimer = 0;
 
-            for (int i = 0; i < numAgents; i++)
+            for (int i = 0; i < NUMBER_OF_AGENTS; i++)
             {
-                pixelAgent[i].AddReward(-1f);
-                pixelAgent[i].EndEpisode();
+                m_AgentGroup.AddGroupReward(-1);
 
+                m_AgentGroup.EndGroupEpisode();
                 InitPixel();
             }
         }
@@ -184,10 +191,10 @@ public class CanvasEnv : MonoBehaviour
         //  1.235 diff
         //    if pixelObject[0].transform.position.x > 12.485 || pixelObject[0].transform.position.x < -12.485 then pixel is out
         //    if pixelObject[0].transform.position.z > 12.485 || pixelObject[0].transform.position.z < -12.485 then pixel is out
-        for (int i = 0; i < numAgents; i++)
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            if (pixel_RB[i].transform.position.x > boundary + 1.235f || pixel_RB[i].transform.position.x < -1 * boundary - 1.235
-                || pixel_RB[i].transform.position.z > boundary + 1.235f || pixel_RB[i].transform.position.z < -1 * boundary - 1.235
+            if (pixel_RB[i].transform.position.x > BOUNDARY + 1.235f || pixel_RB[i].transform.position.x < -1 * BOUNDARY - 1.235
+                || pixel_RB[i].transform.position.z > BOUNDARY + 1.235f || pixel_RB[i].transform.position.z < -1 * BOUNDARY - 1.235
                 || pixel_RB[i].transform.position.y < 0)
             {
                 //  then pixel is out
@@ -244,7 +251,7 @@ public class CanvasEnv : MonoBehaviour
         string key;
         int xPos, zPos;
 
-        for (int i = 0; i < numAgents; i++)
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             do
             {
@@ -278,9 +285,9 @@ public class CanvasEnv : MonoBehaviour
     {
         HashSet<int> spotTaken = new HashSet<int>();
         int takenSpots = 0;
-        for (int i = 0; i < numAgents; i++)
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            for (int j = 0; j < numAgents; j++)
+            for (int j = 0; j < NUMBER_OF_AGENTS; j++)
             {
                 if (pixelAgent[i].gridLocation == pictures[pictureIndex, j] && !spotTaken.Contains(pictures[pictureIndex, j]))
                 {
@@ -298,7 +305,7 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void FillEnvironment()
     {
-        for (int i = 0; i < numAgents; i++)
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
             environment[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;     //  keep track of what is taken in the bigger array
 
         for (int j = 0; j < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; j++)
@@ -357,7 +364,7 @@ public class CanvasEnv : MonoBehaviour
 
         agent_loc.Clear();
 
-        for (int i = 0; i < numAgents; ++i)
+        for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
         {
             GridSquares[pixelAgent[i].gridLocation].GetComponent<Renderer>().material.color = new Color(255, 255, 0, 0.75f);
             agent_loc.Add(pixelAgent[i].gridLocation);
