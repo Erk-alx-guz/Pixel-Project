@@ -58,13 +58,13 @@ public class PixelAgent : Agent
 
         sensor.AddObservation(boundary);
 
-        sensor.AddObservation(34);
-        sensor.AddObservation(19);
+        //sensor.AddObservation(34);
+        //sensor.AddObservation(19);
 
         for (int i = 0; i < env.pixelAgent.Count(); i++)
         {
             //if (!env.agentLocation.Contains(Int32.Parse(env.GridSquares[env.pictures[i]].tag)))
-            //sensor.AddObservation(env.GridSquares[env.pictures[i]].transform.position);
+            sensor.AddObservation(env.GridSquares[env.pictures[i]]);
             sensor.AddObservation(env.pixelAgent[i].gridLocation);
         }
     }
