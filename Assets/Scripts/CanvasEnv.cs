@@ -33,22 +33,11 @@ public class CanvasEnv : MonoBehaviour
     //  Matrix of how the environment looks
     public float[] environment = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
-    //  pictures
-    int pictureIndex = 5;
-
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
-    //  10 X 10 std.
-    int[,] pictures = { { 03, 59}       // 0
-                      , { 47, 09}       // 1
-                      , { 51, 34}       // 2
-                      , { 11, 43}       // 3
-                      , { 06, 60}       // 4
-                      , { 34, 19}       // 5
-                      , { 60, 36}       // 6
-                      , { 27, 28} };    // 7
-
+    [HideInInspector]
+    public List<int> pictures = new();
 
     //  Array of the Agent scripts to 
     public PixelAgent[] pixelAgent = new PixelAgent[NUMBER_OF_AGENTS];
@@ -58,8 +47,8 @@ public class CanvasEnv : MonoBehaviour
     public GameObject Spot;
 
     //  List holding all grid squares
-
-    List<GameObject> GridSquares = new List<GameObject>();
+    [HideInInspector]
+    public List<GameObject> GridSquares = new List<GameObject>();
 
     private int resetTimer;
 
@@ -70,13 +59,23 @@ public class CanvasEnv : MonoBehaviour
 
     private SimpleMultiAgentGroup m_AgentGroup;
 
+    public int controlAgent = 0;
+
+    [HideInInspector]
+    public List<int> agentLocation = new();
+
     // Start is called before the first frame update
     void Start()
     {
+        //// Generate Picture
+        //GenerateLocation(pictures);      
+        pictures.Add(34);
+        pictures.Add(19);
+
         //  Set the pixels on the canvas
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            canvas[Convert(pictures[pictureIndex, i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
+            canvas[pictures[i]] = 1;
         }
 
 
@@ -135,6 +134,7 @@ public class CanvasEnv : MonoBehaviour
 
             print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / NUMBER_OF_AGENTS, 2));
 
+
             //// This is for player input
             //horizontalInput = Input.GetAxis("Horizontal");
             //forwardInput = Input.GetAxis("Vertical");
@@ -143,10 +143,10 @@ public class CanvasEnv : MonoBehaviour
             //////  Test that individual pixels could be tacked and moved
             //////  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-            //pixelAgent[0].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-            //pixelAgent[0].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+            //pixelAgent[agentCon].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
+            //pixelAgent[agentCon].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
 
-            //print(pixel_RB[0].velocity.x);
+            ////print(pixel_RB[agentCon].velocity.x);
             ////  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             ////  Test that individual pixels could be tacked and moved
         }
@@ -154,6 +154,16 @@ public class CanvasEnv : MonoBehaviour
 
     void FixedUpdate()
     {
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            agentLocation[i] = pixelAgent[i].gridLocation;
+
+            if (pictures.Contains(pixelAgent[i].gridLocation))                                                  //  if agent is in a picture location
+                canvas[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          //  change location to zero 0
+            else
+                canvas[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
+        }
+
         resetTimer += 1;
         //Debug.Log(resetTimer.ToString());
         if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
@@ -263,17 +273,17 @@ public class CanvasEnv : MonoBehaviour
 
             spotTaken[key] = true;
 
-            //if (xPos % 2 == 0 && zPos % 2 == 0)
-            //{
-                ToIndex(pictures[pictureIndex, i], ref xPos, ref zPos);
+            if (xPos % 2 == 0 && zPos % 2 == 0)
+            {
+                ToIndex(pictures[i], ref xPos, ref zPos);       //  Fixed spawn
                 pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
                 pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
-            //}
-            //else
-            //{
-            //    pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
-            //    pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
-            //}
+            }
+            else
+            {
+                pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
+                pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+            }
         }
     }
 
@@ -289,10 +299,10 @@ public class CanvasEnv : MonoBehaviour
         {
             for (int j = 0; j < NUMBER_OF_AGENTS; j++)
             {
-                if (pixelAgent[i].gridLocation == pictures[pictureIndex, j] && !spotTaken.Contains(pictures[pictureIndex, j]))
+                if (pictures.Contains(pixelAgent[i].gridLocation) && !spotTaken.Contains(pictures[j]))
                 {
                     takenSpots++;
-                    spotTaken.Add(pictures[pictureIndex, j]);
+                    spotTaken.Add(pictures[j]);
                 }
             }
         }

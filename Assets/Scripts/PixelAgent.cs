@@ -58,15 +58,21 @@ public class PixelAgent : Agent
             boundary = 1;
 
         sensor.AddObservation(boundary);
-    }
 
+        for (int i = 0; i < env.pictures.Count; i++)
+        {
+            //if (!env.agentLocation.Contains(Int32.Parse(env.GridSquares[env.pictures[i]].tag)))
+            sensor.AddObservation(env.GridSquares[env.pictures[i]].transform.position);
+        }
+    }
 
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        // This is for player input
-        horizontalInput = Input.GetAxis("Horizontal");
-        forwardInput = Input.GetAxis("Vertical");
+        //This is for player input
+
+       horizontalInput = Input.GetAxis("Horizontal");
+       forwardInput = Input.GetAxis("Vertical");
 
         pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
         pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
