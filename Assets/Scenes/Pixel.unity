@@ -3744,6 +3744,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  pictures: 
   pixelAgent:
   - {fileID: 892993085}
   - {fileID: 1498387908}
@@ -3753,7 +3754,8 @@ MonoBehaviour:
   Spot: {fileID: 4143830508264377102, guid: 691f653d6b648754a8348d1ed46c1ffe, type: 3}
   GridSquares: []
   MaxEnvironmentSteps: 10000
-  agentCon: 0
+  controlAgent: 0
+  agentLocation: 
 --- !u!1 &510340730
 GameObject:
   m_ObjectHideFlags: 0
@@ -4061,7 +4063,7 @@ PrefabInstance:
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 3210
+      value: 3208
       objectReference: {fileID: 0}
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
@@ -4344,7 +4346,7 @@ PrefabInstance:
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 3210
+      value: 3208
       objectReference: {fileID: 0}
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}

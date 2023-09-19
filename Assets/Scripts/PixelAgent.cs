@@ -6,8 +6,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Policies;
-
-
+using System.Linq;
 
 public class PixelAgent : Agent
 {
@@ -59,10 +58,14 @@ public class PixelAgent : Agent
 
         sensor.AddObservation(boundary);
 
-        for (int i = 0; i < env.pictures.Count; i++)
+        sensor.AddObservation(34);
+        sensor.AddObservation(19);
+
+        for (int i = 0; i < env.pixelAgent.Count(); i++)
         {
             //if (!env.agentLocation.Contains(Int32.Parse(env.GridSquares[env.pictures[i]].tag)))
-            sensor.AddObservation(env.GridSquares[env.pictures[i]].transform.position);
+            //sensor.AddObservation(env.GridSquares[env.pictures[i]].transform.position);
+            sensor.AddObservation(env.pixelAgent[i].gridLocation);
         }
     }
 

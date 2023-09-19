@@ -75,7 +75,7 @@ public class CanvasEnv : MonoBehaviour
         //  Set the pixels on the canvas
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            canvas[pictures[i]] = 1;
+            canvas[Convert(pictures[i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
         }
 
 
@@ -158,10 +158,15 @@ public class CanvasEnv : MonoBehaviour
         {
             agentLocation[i] = pixelAgent[i].gridLocation;
 
-            if (pictures.Contains(pixelAgent[i].gridLocation))                                                  //  if agent is in a picture location
-                canvas[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          //  change location to zero 0
-            else
-                canvas[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
+            for (int j = 0; j < NUMBER_OF_AGENTS; j++)
+            {
+
+                if (pictures[j] == pixelAgent[i].gridLocation)                                       // if agent is in a picture location
+                    canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          // change location to zero 0
+                else if (!agentLocation.Contains(pictures[j]))
+                    canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;          // No other agent is occupying the grid square
+
+            }
         }
 
         resetTimer += 1;
@@ -257,6 +262,8 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void InitPixel()
     {
+
+        agentLocation.Clear();
         Hashtable spotTaken = new Hashtable();
         string key;
         int xPos, zPos;
@@ -284,6 +291,8 @@ public class CanvasEnv : MonoBehaviour
                 pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
                 pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
             }
+
+            agentLocation.Add(pixelAgent[i].gridLocation);
         }
     }
 
@@ -297,14 +306,13 @@ public class CanvasEnv : MonoBehaviour
         int takenSpots = 0;
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            for (int j = 0; j < NUMBER_OF_AGENTS; j++)
+            if (pictures.Contains(pixelAgent[i].gridLocation) && !spotTaken.Contains(pixelAgent[i].gridLocation))
             {
-                if (pictures.Contains(pixelAgent[i].gridLocation) && !spotTaken.Contains(pictures[j]))
-                {
-                    takenSpots++;
-                    spotTaken.Add(pictures[j]);
-                }
+                takenSpots++;
+                spotTaken.Add(pixelAgent[i].gridLocation);
             }
+            else
+                spotTaken.Remove(pixelAgent[i].gridLocation);
         }
         spotTaken.Clear();
         return takenSpots;
@@ -400,16 +408,12 @@ public class CanvasEnv : MonoBehaviour
 
     void VisualizeImage()
     {
-        //  (BigArray - SmallArray) / 2 = Starting_Point_Index_For_Small_2DArray
-
-        int maxIndex = (MAX_MATRIX_SIZE - CURRENT_MATRIX_SIZE) / 2;
-        for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            for (int j = 0; j < CURRENT_MATRIX_SIZE; j++)
-            {
-                if (canvas[(maxIndex + i) * MAX_MATRIX_SIZE + maxIndex + j] == 1)
-                    GridSquares[i * CURRENT_MATRIX_SIZE + j].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
-            }
+            if (canvas[Convert(pictures[i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] == 1)
+                GridSquares[pictures[i]].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
+            else
+                GridSquares[pictures[i]].GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0f);
         }
     }
 
