@@ -3744,17 +3744,17 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  pictures: 
   pixelAgent:
   - {fileID: 892993085}
   - {fileID: 1498387908}
   pixel_RB:
   - {fileID: 892993087}
   - {fileID: 1498387910}
-  Spot: {fileID: 4143830508264377102, guid: 691f653d6b648754a8348d1ed46c1ffe, type: 3}
+  controlAgent: 0
+  gridSquare: {fileID: 0}
   GridSquares: []
   MaxEnvironmentSteps: 10000
-  controlAgent: 0
+  pictures: 
   agentLocation: 
 --- !u!1 &510340730
 GameObject:

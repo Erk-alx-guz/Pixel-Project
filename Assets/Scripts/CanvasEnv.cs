@@ -21,12 +21,18 @@ public class CanvasEnv : MonoBehaviour
 
 
     const int MAX_MATRIX_SIZE = 40;
+    
     const int CURRENT_MATRIX_SIZE = 10;
+    
     public int small_size = CURRENT_MATRIX_SIZE;
+    
     public int big_size = MAX_MATRIX_SIZE;
+    
     float[] cordList = new float[CURRENT_MATRIX_SIZE];
+    
     const float BOUNDARY = 11.25f;
-    float startingCords = BOUNDARY;
+
+    float startingCoordinates = BOUNDARY;
 
     const int NUMBER_OF_AGENTS = 2;
 
@@ -36,30 +42,31 @@ public class CanvasEnv : MonoBehaviour
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
-    [HideInInspector]
-    public List<int> pictures = new();
-
     //  Array of the Agent scripts to 
+    [Header("Agent List")]
     public PixelAgent[] pixelAgent = new PixelAgent[NUMBER_OF_AGENTS];
 
     public Rigidbody[] pixel_RB = new Rigidbody[NUMBER_OF_AGENTS];
 
-    public GameObject Spot;
+    private SimpleMultiAgentGroup m_AgentGroup;
+
+    public int controlAgent = 0;
+
+    [Header("Grid Square")]
+    public GameObject gridSquare;
 
     //  List holding all grid squares
     [HideInInspector]
     public List<GameObject> GridSquares = new List<GameObject>();
 
-    private int resetTimer;
-
     [Header("Max Steps")]
-    [Space(10)]
 
     public int MaxEnvironmentSteps;
 
-    private SimpleMultiAgentGroup m_AgentGroup;
+    private int resetTimer;
 
-    public int controlAgent = 0;
+    [HideInInspector]
+    public List<int> pictures = new();
 
     [HideInInspector]
     public List<int> agentLocation = new();
@@ -94,11 +101,11 @@ public class CanvasEnv : MonoBehaviour
 
         for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
         {
-            cordList[i] = startingCords;
-            startingCords -= 2.5f;
+            cordList[i] = startingCoordinates;
+            startingCoordinates -= 2.5f;
         }
 
-        StartCoroutine(SpotDrop());
+        StartCoroutine(GridSquareDrop());
         InitPixel();
 
         m_AgentGroup = new SimpleMultiAgentGroup();
@@ -129,10 +136,10 @@ public class CanvasEnv : MonoBehaviour
 
             //  Environment reward
             for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
-                m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenSpots() / NUMBER_OF_AGENTS, 2));
+                m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
 
 
-            print("taken: " + TakenSpots() + " reward: " + Mathf.Pow((float)TakenSpots() / NUMBER_OF_AGENTS, 2));
+            print("taken: " + TakenGridSquares() + " reward: " + Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
 
 
             //// This is for player input
@@ -229,7 +236,7 @@ public class CanvasEnv : MonoBehaviour
     }
 
     //  Spawn all grid squares
-    IEnumerator SpotDrop()
+    IEnumerator GridSquareDrop()
     {
         int index;
         for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
@@ -238,7 +245,7 @@ public class CanvasEnv : MonoBehaviour
             {
                 index = i * CURRENT_MATRIX_SIZE + j;
 
-                GridSquares.Add(Instantiate(Spot, new Vector3(cordList[i], 0.65f, cordList[j]), Quaternion.identity));             //  gameObject
+                GridSquares.Add(Instantiate(gridSquare, new Vector3(cordList[i], 0.65f, cordList[j]), Quaternion.identity));             //  gameObject
 
                 if (index < 10)
                 {
@@ -262,9 +269,26 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void InitPixel()
     {
+        int x = 0, z = 0;
 
         agentLocation.Clear();
-        Hashtable spotTaken = new Hashtable();
+
+        GenerateLocation(agentLocation);
+
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            ToIndex(agentLocation[i], ref x, ref z);    //  Random Spawn
+            //ToIndex(pictures[i], ref x, ref z);       //  Fixed spawn
+            pixel_RB[i].transform.localPosition = new Vector3(cordList[x], 0.5f, cordList[z]);
+            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+
+            agentLocation.Add(pixelAgent[i].gridLocation);
+        }        
+    }
+
+    void GenerateLocation(List<int> locations)
+    {
+        Hashtable gridSquaresTaken = new();
         string key;
         int xPos, zPos;
 
@@ -272,27 +296,13 @@ public class CanvasEnv : MonoBehaviour
         {
             do
             {
-                xPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
-                zPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
+                xPos = UnityEngine.Random.Range(0, MAX_MATRIX_SIZE);
+                zPos = UnityEngine.Random.Range(0, MAX_MATRIX_SIZE);
                 key = string.Format("{0:N2}", xPos);
                 key += string.Format("{0:N2}", zPos);
-            } while (spotTaken[key] != null);           //  check if the location is taken 
+            } while (gridSquaresTaken[key] != null);           //  check if the location is taken 
 
-            spotTaken[key] = true;
-
-            if (xPos % 2 == 0 && zPos % 2 == 0)
-            {
-                ToIndex(pictures[i], ref xPos, ref zPos);       //  Fixed spawn
-                pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.125f, cordList[zPos]);
-                pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
-            }
-            else
-            {
-                pixel_RB[i].transform.localPosition = new Vector3(cordList[xPos], 0.5f, cordList[zPos]);
-                pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
-            }
-
-            agentLocation.Add(pixelAgent[i].gridLocation);
+            locations.Add(xPos * MAX_MATRIX_SIZE + zPos);
         }
     }
 
@@ -300,21 +310,21 @@ public class CanvasEnv : MonoBehaviour
     /// Checks what spots are taken on the picture by pixel agents
     /// </summary>
     /// <returns></returns>
-    int TakenSpots()
+    int TakenGridSquares()
     {
-        HashSet<int> spotTaken = new HashSet<int>();
+        HashSet<int> gridSquaresTaken = new HashSet<int>();
         int takenSpots = 0;
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            if (pictures.Contains(pixelAgent[i].gridLocation) && !spotTaken.Contains(pixelAgent[i].gridLocation))
+            if (pictures.Contains(pixelAgent[i].gridLocation) && !gridSquaresTaken.Contains(pixelAgent[i].gridLocation))
             {
                 takenSpots++;
-                spotTaken.Add(pixelAgent[i].gridLocation);
+                gridSquaresTaken.Add(pixelAgent[i].gridLocation);
             }
             else
-                spotTaken.Remove(pixelAgent[i].gridLocation);
+                gridSquaresTaken.Remove(pixelAgent[i].gridLocation);
         }
-        spotTaken.Clear();
+        gridSquaresTaken.Clear();
         return takenSpots;
     }
 

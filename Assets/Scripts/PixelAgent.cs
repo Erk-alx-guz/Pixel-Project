@@ -93,12 +93,6 @@ public class PixelAgent : Agent
             pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
             pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
         }
-        
-        //  REWARDS
-        
-        //  filling a pixel on the picture
-
-        //  Don't get out of the canvas
     }
 
 
