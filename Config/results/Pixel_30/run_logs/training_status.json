@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 18499990,
+                "file_path": "results\\Pixel_30\\Pixel\\Pixel-18499990.onnx",
+                "reward": 0.0,
+                "creation_time": 1695302527.0781858,
+                "auxillary_file_paths": [
+                    "results\\Pixel_30\\Pixel\\Pixel-18499990.pt"
+                ]
+            },
+            {
+                "steps": 18999962,
+                "file_path": "results\\Pixel_30\\Pixel\\Pixel-18999962.onnx",
+                "reward": 0.0,
+                "creation_time": 1695306188.9235673,
+                "auxillary_file_paths": [
+                    "results\\Pixel_30\\Pixel\\Pixel-18999962.pt"
+                ]
+            },
+            {
+                "steps": 19499932,
+                "file_path": "results\\Pixel_30\\Pixel\\Pixel-19499932.onnx",
+                "reward": 0.0,
+                "creation_time": 1695309799.3012807,
+                "auxillary_file_paths": [
+                    "results\\Pixel_30\\Pixel\\Pixel-19499932.pt"
+                ]
+            },
+            {
+                "steps": 19999934,
+                "file_path": "results\\Pixel_30\\Pixel\\Pixel-19999934.onnx",
+                "reward": 0.0,
+                "creation_time": 1695313394.193612,
+                "auxillary_file_paths": [
+                    "results\\Pixel_30\\Pixel\\Pixel-19999934.pt"
+                ]
+            },
+            {
+                "steps": 20084750,
+                "file_path": "results\\Pixel_30\\Pixel\\Pixel-20084750.onnx",
+                "reward": 0.0,
+                "creation_time": 1695313993.3545527,
+                "auxillary_file_paths": [
+                    "results\\Pixel_30\\Pixel\\Pixel-20084750.pt"
+                ]
+            }
+        ],
+        "elo": -532.4393720133978,
+        "final_checkpoint": {
+            "steps": 20084750,
+            "file_path": "results\\Pixel_30\\Pixel.onnx",
+            "reward": 0.0,
+            "creation_time": 1695313993.3545527,
+            "auxillary_file_paths": [
+                "results\\Pixel_30\\Pixel\\Pixel-20084750.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.13.1"
+    }
+}
