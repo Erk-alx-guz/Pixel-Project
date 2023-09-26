@@ -74,8 +74,6 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //// Generate Picture
-        //GenerateLocation(pictures);      
         pictures.Add(34);
         pictures.Add(19);
 
@@ -170,11 +168,13 @@ public class CanvasEnv : MonoBehaviour
 
                 if (pictures[j] == pixelAgent[i].gridLocation)                                       // if agent is in a picture location
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          // change location to zero 0
-                else if (!agentLocation.Contains(pictures[j]))
+                else if (!agentLocation.Contains(pictures[j]) )
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;          // No other agent is occupying the grid square
 
             }
         }
+
+        //All
 
         resetTimer += 1;
         //Debug.Log(resetTimer.ToString());
@@ -283,11 +283,16 @@ public class CanvasEnv : MonoBehaviour
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
 
             agentLocation.Add(pixelAgent[i].gridLocation);
-        }        
+        }
+
+        pictures.Clear();
+        // Generate Picture
+        GenerateLocation(pictures);
     }
 
     void GenerateLocation(List<int> locations)
     {
+        locations.Clear();
         Hashtable gridSquaresTaken = new();
         string key;
         int xPos, zPos;
@@ -296,13 +301,13 @@ public class CanvasEnv : MonoBehaviour
         {
             do
             {
-                xPos = UnityEngine.Random.Range(0, MAX_MATRIX_SIZE);
-                zPos = UnityEngine.Random.Range(0, MAX_MATRIX_SIZE);
+                xPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
+                zPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
                 key = string.Format("{0:N2}", xPos);
                 key += string.Format("{0:N2}", zPos);
             } while (gridSquaresTaken[key] != null);           //  check if the location is taken 
 
-            locations.Add(xPos * MAX_MATRIX_SIZE + zPos);
+            locations.Add(xPos * CURRENT_MATRIX_SIZE + zPos);
         }
     }
 
