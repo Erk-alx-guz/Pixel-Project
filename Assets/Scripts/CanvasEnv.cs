@@ -68,7 +68,7 @@ public class CanvasEnv : MonoBehaviour
     [HideInInspector]
     public List<int> pictures = new();
 
-    [HideInInspector]
+    //[HideInInspector]
     public List<int> agentLocation = new();
 
     // Start is called before the first frame update
@@ -280,14 +280,13 @@ public class CanvasEnv : MonoBehaviour
             ToIndex(agentLocation[i], ref x, ref z);    //  Random Spawn
             //ToIndex(pictures[i], ref x, ref z);       //  Fixed spawn
             pixel_RB[i].transform.localPosition = new Vector3(cordList[x], 0.5f, cordList[z]);
-            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
-
-            agentLocation.Add(pixelAgent[i].gridLocation);
+            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>(); 
         }        
     }
 
     void GenerateLocation(List<int> locations)
     {
+        locations.Clear();
         Hashtable gridSquaresTaken = new();
         string key;
         int xPos, zPos;
@@ -296,13 +295,13 @@ public class CanvasEnv : MonoBehaviour
         {
             do
             {
-                xPos = UnityEngine.Random.Range(0, MAX_MATRIX_SIZE);
-                zPos = UnityEngine.Random.Range(0, MAX_MATRIX_SIZE);
+                xPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
+                zPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
                 key = string.Format("{0:N2}", xPos);
                 key += string.Format("{0:N2}", zPos);
             } while (gridSquaresTaken[key] != null);           //  check if the location is taken 
 
-            locations.Add(xPos * MAX_MATRIX_SIZE + zPos);
+            locations.Add(xPos * CURRENT_MATRIX_SIZE + zPos);
         }
     }
 
