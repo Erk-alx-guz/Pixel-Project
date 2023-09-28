@@ -68,7 +68,7 @@ public class CanvasEnv : MonoBehaviour
     [HideInInspector]
     public List<int> pictures = new();
 
-    //[HideInInspector]
+    [HideInInspector]
     public List<int> agentLocation = new();
 
     // Start is called before the first frame update
