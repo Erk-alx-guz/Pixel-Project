@@ -278,8 +278,8 @@ public class CanvasEnv : MonoBehaviour
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            ToIndex(agentLocation[i], ref x, ref z);    //  Random Spawn
-            //ToIndex(pictures[i], ref x, ref z);       //  Fixed spawn
+            ToIndex(CURRENT_MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
+            //ToIndex(CURRENT_MATRIX_SIZE, pictures[i], ref x, ref z);       //  Fixed spawn
             pixel_RB[i].transform.localPosition = new Vector3(cordList[x], 0.5f, cordList[z]);
 
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
@@ -339,10 +339,10 @@ public class CanvasEnv : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="smallArrayIndex"></param>
-    /// <param name="smallArraySize"></param>
-    /// <param name="bigArraySize"></param>
+    /// <param name="smallArrayLength"></param>
+    /// <param name="bigArrayLenght"></param>
     /// <returns></returns>
-    int Convert(int smallArrayIndex, int smallArraySize, int bigArraySize)
+    int Convert(int smallArrayIndex, int smallArrayLength, int bigArrayLenght)
     {
         int currentMatrix_X;
         int currentMatrix_Y;
@@ -350,15 +350,15 @@ public class CanvasEnv : MonoBehaviour
         int maxMatrix_Y;
 
         //  The idex of the small 1D array is converted into the indices of a 2D array in the same location
-        currentMatrix_X = smallArrayIndex / smallArraySize;
-        currentMatrix_Y = smallArrayIndex - currentMatrix_X * smallArraySize;
+        currentMatrix_X = smallArrayIndex / smallArrayLength;
+        currentMatrix_Y = smallArrayIndex - currentMatrix_X * smallArrayLength;
 
         // Now we make the small array bigger 
-        maxMatrix_X = currentMatrix_X + ((bigArraySize - smallArraySize) / 2);
-        maxMatrix_Y = currentMatrix_Y + ((bigArraySize - smallArraySize) / 2);
+        maxMatrix_X = currentMatrix_X + ((bigArrayLenght - smallArrayLength) / 2);
+        maxMatrix_Y = currentMatrix_Y + ((bigArrayLenght - smallArrayLength) / 2);
 
         //  The indices of the big 2D array is now converted into the index of a 1D array
-        int bigArrayIndex = maxMatrix_X * bigArraySize + maxMatrix_Y;
+        int bigArrayIndex = maxMatrix_X * bigArrayLenght + maxMatrix_Y;
 
         return bigArrayIndex;
     }
@@ -434,17 +434,10 @@ public class CanvasEnv : MonoBehaviour
     /// <param name="index"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    void ToIndex(int index, ref int x, ref int y)
+    void ToIndex(int size, int index, ref int x, ref int y)
     {
-        string snum = index.ToString();
-
-        if (snum.Length == 1)
-            x = snum[0] - 48;
-        else if (snum.Length == 2)
-        {
-            x = snum[0] - 48;
-            y = snum[1] - 48;
-        }
+        x = index / size;
+        y = index - x * size;
     }
 }
 

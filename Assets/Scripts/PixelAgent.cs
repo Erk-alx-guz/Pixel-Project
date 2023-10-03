@@ -48,18 +48,14 @@ public class PixelAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        int boundary = 0;
-        //  Where the agent is
-        sensor.AddObservation(pixel.transform.position);
+        sensor.AddObservation(env.canvas);                      //  1600
 
-        //  The picture
-        sensor.AddObservation(env.canvas);
+        sensor.AddObservation(pixel.transform.position);        //  3
 
-        if (env.OutOfBoundary())
-            boundary = 1;
+        sensor.AddObservation(outOfBoundary);                   //  1
 
-        sensor.AddObservation(boundary);
-    }
+        sensor.AddObservation(done);                            //  1
+    }   
 
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
     public override void Heuristic(in ActionBuffers actionsOut)
