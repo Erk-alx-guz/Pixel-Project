@@ -57,16 +57,6 @@ public class PixelAgent : Agent
             boundary = 1;
 
         sensor.AddObservation(boundary);
-
-        //sensor.AddObservation(34);
-        //sensor.AddObservation(19);
-
-        for (int i = 0; i < env.pixelAgent.Count(); i++)
-        {
-            //if (!env.agentLocation.Contains(Int32.Parse(env.GridSquares[env.pictures[i]].tag)))
-            sensor.AddObservation(env.GridSquares[env.pictures[i]]);
-            sensor.AddObservation(env.pixelAgent[i].gridLocation);
-        }
     }
 
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
