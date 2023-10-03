@@ -289,17 +289,12 @@ public class CanvasEnv : MonoBehaviour
             ToIndex(agentLocation[i], ref x, ref z);    //  Random Spawn
             //ToIndex(pictures[i], ref x, ref z);       //  Fixed spawn
             pixel_RB[i].transform.localPosition = new Vector3(cordList[x], 0.5f, cordList[z]);
-<<<<<<< HEAD
-            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>(); 
-        }        
-=======
+
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
         }
-
         pictures.Clear();
         // Generate Picture
         GenerateLocation(pictures);
->>>>>>> RandomSpawn
     }
 
     void GenerateLocation(List<int> locations)
