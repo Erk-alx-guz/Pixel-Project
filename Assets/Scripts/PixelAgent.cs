@@ -22,6 +22,10 @@ public class PixelAgent : Agent
 
     public int gridLocation;
     Collider coll;
+
+    public bool done = false;
+
+    public bool outOfBoundary = false;
  
 
     void Start()
