@@ -68,14 +68,12 @@ public class CanvasEnv : MonoBehaviour
     [HideInInspector]
     public List<int> pictures = new();
 
-    [HideInInspector]
+    //[HideInInspector]
     public List<int> agentLocation = new();
 
     // Start is called before the first frame update
     void Start()
     {
-        //// Generate Picture
-        //GenerateLocation(pictures);      
         pictures.Add(34);
         pictures.Add(19);
 
@@ -139,8 +137,10 @@ public class CanvasEnv : MonoBehaviour
                 m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
 
 
-            print("taken: " + TakenGridSquares() + " reward: " + Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
+            //print("taken: " + TakenGridSquares() + " reward: " + Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
 
+            print("34 : " + canvas[Convert(34, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)]);
+            print("19 : " + canvas[Convert(19, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)]);
 
             //// This is for player input
             //horizontalInput = Input.GetAxis("Horizontal");
@@ -170,11 +170,13 @@ public class CanvasEnv : MonoBehaviour
 
                 if (pictures[j] == pixelAgent[i].gridLocation)                                       // if agent is in a picture location
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          // change location to zero 0
-                else if (!agentLocation.Contains(pictures[j]))
+                else if (!agentLocation.Contains(pictures[j]) )
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;          // No other agent is occupying the grid square
 
             }
         }
+
+        //All
 
         resetTimer += 1;
         //Debug.Log(resetTimer.ToString());
@@ -183,23 +185,30 @@ public class CanvasEnv : MonoBehaviour
             resetTimer = 0;
 
             m_AgentGroup.GroupEpisodeInterrupted();
+            SetArrayToZero();
+            ResetGridSquares();
             InitPixel();
         }
 
         if (OutOfBoundary())
         {
             resetTimer = 0;
+            m_AgentGroup.AddGroupReward(-1);
 
-            for (int i = 0; i < NUMBER_OF_AGENTS; i++)
-            {
-                m_AgentGroup.AddGroupReward(-1);
-
-                m_AgentGroup.EndGroupEpisode();
-                InitPixel();
-            }
+            m_AgentGroup.EndGroupEpisode();
+            SetArrayToZero();
+            ResetGridSquares();
+            InitPixel();
         }
     }
 
+    void SetArrayToZero()
+    {
+        for (int i = 0; i < MAX_MATRIX_SIZE * MAX_MATRIX_SIZE; i++)
+        {
+            canvas[i] = 0;
+        }
+    }
 
     /// <summary>
     /// Used to check if any pixels are outside of the area they are allowd to be in
@@ -280,8 +289,17 @@ public class CanvasEnv : MonoBehaviour
             ToIndex(agentLocation[i], ref x, ref z);    //  Random Spawn
             //ToIndex(pictures[i], ref x, ref z);       //  Fixed spawn
             pixel_RB[i].transform.localPosition = new Vector3(cordList[x], 0.5f, cordList[z]);
+<<<<<<< HEAD
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>(); 
         }        
+=======
+            pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+        }
+
+        pictures.Clear();
+        // Generate Picture
+        GenerateLocation(pictures);
+>>>>>>> RandomSpawn
     }
 
     void GenerateLocation(List<int> locations)
@@ -423,6 +441,14 @@ public class CanvasEnv : MonoBehaviour
                 GridSquares[pictures[i]].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
             else
                 GridSquares[pictures[i]].GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0f);
+        }
+    }
+
+    void ResetGridSquares()
+    {
+        for (int i = 0; i < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; i++)
+        {
+            GridSquares[i].GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0f);
         }
     }
 

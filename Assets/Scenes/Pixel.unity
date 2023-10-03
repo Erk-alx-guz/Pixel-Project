@@ -3751,7 +3751,8 @@ MonoBehaviour:
   - {fileID: 892993087}
   - {fileID: 1498387910}
   controlAgent: 0
-  gridSquare: {fileID: 0}
+  gridSquare: {fileID: 4143830508264377102, guid: 691f653d6b648754a8348d1ed46c1ffe,
+    type: 3}
   GridSquares: []
   MaxEnvironmentSteps: 10000
   pictures: 
@@ -4063,7 +4064,7 @@ PrefabInstance:
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 3208
+      value: 3204
       objectReference: {fileID: 0}
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
@@ -4346,7 +4347,7 @@ PrefabInstance:
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 3208
+      value: 3204
       objectReference: {fileID: 0}
     - target: {fileID: 4542165988249419698, guid: e26d131a4dcff9843b9d34b91df2d491,
         type: 3}
