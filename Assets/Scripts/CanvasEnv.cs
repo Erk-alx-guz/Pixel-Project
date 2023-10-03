@@ -36,9 +36,6 @@ public class CanvasEnv : MonoBehaviour
 
     const int NUMBER_OF_AGENTS = 2;
 
-    //  Matrix of how the environment looks
-    public float[] environment = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
-
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
@@ -91,9 +88,6 @@ public class CanvasEnv : MonoBehaviour
             {
                 if (canvas[i * MAX_MATRIX_SIZE + j] != 1)
                     canvas[i * MAX_MATRIX_SIZE + j] = 0;
-
-                if (environment[i * MAX_MATRIX_SIZE + j] != 1)
-                    environment[i * MAX_MATRIX_SIZE + j] = 0;
             }
         }
 
@@ -129,8 +123,6 @@ public class CanvasEnv : MonoBehaviour
             VisualizeImage();
 
             //VisualizePixelTracking();
-
-            FillEnvironment();
 
             //  Environment reward
             for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
@@ -338,21 +330,6 @@ public class CanvasEnv : MonoBehaviour
         }
         gridSquaresTaken.Clear();
         return takenSpots;
-    }
-
-    /// <summary>
-    /// Fill an array of how the canvas looks with all the agents on it
-    /// </summary>
-    void FillEnvironment()
-    {
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
-            environment[Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;     //  keep track of what is taken in the bigger array
-
-        for (int j = 0; j < CURRENT_MATRIX_SIZE * CURRENT_MATRIX_SIZE; j++)
-        {
-            if (environment[Convert(j, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] != 1) //  it is not taken so set a ZERO
-                environment[Convert(j, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;
-        }
     }
 
     /// <summary>

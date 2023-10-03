@@ -50,8 +50,6 @@ public class PixelAgent : Agent
 
         //  The picture
         sensor.AddObservation(env.canvas);
-        //  The environment
-        sensor.AddObservation(env.environment);
 
         if (env.OutOfBoundary())
             boundary = 1;
