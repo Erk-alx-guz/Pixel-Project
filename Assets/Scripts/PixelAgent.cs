@@ -26,7 +26,11 @@ public class PixelAgent : Agent
     public bool done = false;
 
     public bool outOfBoundary = false;
- 
+
+    //  agent coordinate on big array
+    public int agent_x_coordinate;
+
+    public int agent_y_coordinate;
 
     void Start()
     {
@@ -50,7 +54,9 @@ public class PixelAgent : Agent
     {
         sensor.AddObservation(env.canvas);                      //  1600
 
-        sensor.AddObservation(pixel.transform.position);        //  3
+        sensor.AddObservation(agent_x_coordinate);              //  1
+
+        sensor.AddObservation(agent_y_coordinate);              //  1
 
         sensor.AddObservation(outOfBoundary);                   //  1
 

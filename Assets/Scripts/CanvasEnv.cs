@@ -128,12 +128,6 @@ public class CanvasEnv : MonoBehaviour
             for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
                 m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
 
-
-            //print("taken: " + TakenGridSquares() + " reward: " + Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
-
-            print("34 : " + canvas[Convert(34, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)]);
-            print("19 : " + canvas[Convert(19, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)]);
-
             //// This is for player input
             //horizontalInput = Input.GetAxis("Horizontal");
             //forwardInput = Input.GetAxis("Vertical");
@@ -153,6 +147,13 @@ public class CanvasEnv : MonoBehaviour
 
     void FixedUpdate()
     {
+        SetAgent_XY_Coordinate();
+
+        //print("X : " + pixelAgent[0].agent_x_coordinate + ", Y : " + pixelAgent[0].agent_y_coordinate);
+
+
+        //print("small : " + pixelAgent[0].gridLocation + ", big : " + Convert(pixelAgent[0].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE));
+
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             agentLocation[i] = pixelAgent[i].gridLocation;
@@ -191,6 +192,14 @@ public class CanvasEnv : MonoBehaviour
             SetArrayToZero();
             ResetGridSquares();
             InitPixel();
+        }
+    }
+
+    void SetAgent_XY_Coordinate()
+    {
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            ToIndex(MAX_MATRIX_SIZE, Convert(pixelAgent[i].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE), ref pixelAgent[i].agent_x_coordinate, ref pixelAgent[i].agent_y_coordinate);
         }
     }
 
@@ -342,7 +351,7 @@ public class CanvasEnv : MonoBehaviour
     /// <param name="smallArrayLength"></param>
     /// <param name="bigArrayLenght"></param>
     /// <returns></returns>
-    int Convert(int smallArrayIndex, int smallArrayLength, int bigArrayLenght)
+    public int Convert(int smallArrayIndex, int smallArrayLength, int bigArrayLenght)
     {
         int currentMatrix_X;
         int currentMatrix_Y;
@@ -434,7 +443,7 @@ public class CanvasEnv : MonoBehaviour
     /// <param name="index"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    void ToIndex(int size, int index, ref int x, ref int y)
+    public void ToIndex(int size, int index, ref int x, ref int y)
     {
         x = index / size;
         y = index - x * size;
