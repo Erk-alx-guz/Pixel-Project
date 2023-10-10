@@ -7,34 +7,24 @@ using UnityEngine;
 
 public class CanvasEnv : MonoBehaviour
 {
-    //  Scale
-    //  40 X 40: cords = -48.75f
-    //  20 X 20: cords = -23.75f
-    //  10 X 10: cords = -11.25f
+    const int MAX_MATRIX_SIZE = 10;
 
-    //  xz          xz
-    //
-    //  ++          +-
-    //
-    //
-    //  -+          --
-
-
-    const int MAX_MATRIX_SIZE = 40;
-    
     const int CURRENT_MATRIX_SIZE = 10;
-    
+
     public int small_size = CURRENT_MATRIX_SIZE;
-    
+
     public int big_size = MAX_MATRIX_SIZE;
-    
+
     float[] cordList = new float[CURRENT_MATRIX_SIZE];
-    
+
     const float BOUNDARY = 11.25f;
 
     float startingCoordinates = BOUNDARY;
 
     const int NUMBER_OF_AGENTS = 2;
+
+    //  Matrix of how the environment looks
+    public float[] environment = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
 
     //  Matrix of how the pixel art looks
     public float[] canvas = new float[MAX_MATRIX_SIZE * MAX_MATRIX_SIZE];
@@ -68,6 +58,12 @@ public class CanvasEnv : MonoBehaviour
     //[HideInInspector]
     public List<int> agentLocation = new();
 
+    float totalAgentGroupReward = 0;
+
+    float takenHistory = 0;
+
+    const string ImagePath = @"C:\Users\ML-Lab\Desktop\Erik\ML-Agents\Pixel\Images\";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,7 +75,6 @@ public class CanvasEnv : MonoBehaviour
         {
             canvas[Convert(pictures[i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
         }
-
 
         //  Fill the rest of canvas and environment with zeros
         for (int i = 0; i < MAX_MATRIX_SIZE; i++)
@@ -110,49 +105,41 @@ public class CanvasEnv : MonoBehaviour
         resetTimer = 0;
     }
 
-    //// User input
-    //private float speed = 1f;
-    //private float horizontalInput;
-    //private float forwardInput;
-
     // Update is called once per frame
     void Update()
     {
+        float dif = 0;
+
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
             VisualizeImage();
 
-            //VisualizePixelTracking();
+            dif = Mathf.Abs(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2) - totalAgentGroupReward);
 
-            //  Environment reward
-            for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
-                m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
+            if (takenHistory < TakenGridSquares())
+            {
+                takenHistory = TakenGridSquares();
 
-            //// This is for player input
-            //horizontalInput = Input.GetAxis("Horizontal");
-            //forwardInput = Input.GetAxis("Vertical");
+                totalAgentGroupReward += dif;
 
+                for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+                    m_AgentGroup.AddGroupReward(totalAgentGroupReward);
+            }
+            else if (takenHistory > TakenGridSquares())
+            {
+                takenHistory = TakenGridSquares();
 
-            //////  Test that individual pixels could be tacked and moved
-            //////  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                totalAgentGroupReward -= dif;
 
-            //pixelAgent[agentCon].transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-            //pixelAgent[agentCon].transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
-
-            ////print(pixel_RB[agentCon].velocity.x);
-            ////  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            ////  Test that individual pixels could be tacked and moved
+                for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+                    m_AgentGroup.AddGroupReward(totalAgentGroupReward);
+            }            
         }
     }
 
     void FixedUpdate()
     {
         SetAgent_XY_Coordinate();
-
-        //print("X : " + pixelAgent[0].agent_x_coordinate + ", Y : " + pixelAgent[0].agent_y_coordinate);
-
-
-        //print("small : " + pixelAgent[0].gridLocation + ", big : " + Convert(pixelAgent[0].gridLocation, CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE));
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
@@ -163,28 +150,28 @@ public class CanvasEnv : MonoBehaviour
 
                 if (pictures[j] == pixelAgent[i].gridLocation)                                       // if agent is in a picture location
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          // change location to zero 0
-                else if (!agentLocation.Contains(pictures[j]) )
+                else if (!agentLocation.Contains(pictures[j]))
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;          // No other agent is occupying the grid square
 
             }
         }
 
-        //All
+        //if (TakenGridSquares() == pictures.Count)
+        //{
+        //    //StartCoroutine(ScreenShot());
 
-        if (TakenGridSquares() == pictures.Count)
-        {
-            resetTimer = 0;
+        //    resetTimer = 0;
 
-            m_AgentGroup.EndGroupEpisode();
-            SetArrayToZero();
-            ResetGridSquares();
-            InitPixel();
-        }
+        //    m_AgentGroup.EndGroupEpisode();
+        //    SetArrayToZero();
+        //    ResetGridSquares();
+        //    InitPixel();
+        //}
 
-        resetTimer += 1;
-        //Debug.Log(resetTimer.ToString());
         if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
         {
+            //ScreenCapture.CaptureScreenshot(ImagePath + "PixelOutOfTime " + dateTime + ".png");
+
             resetTimer = 0;
 
             m_AgentGroup.GroupEpisodeInterrupted();
@@ -195,6 +182,8 @@ public class CanvasEnv : MonoBehaviour
 
         if (OutOfBoundary())
         {
+            //ScreenCapture.CaptureScreenshot(ImagePath + "PixelOutOfBoundary " + dateTime + ".png");
+
             resetTimer = 0;
             m_AgentGroup.AddGroupReward(-1);
 
@@ -203,7 +192,33 @@ public class CanvasEnv : MonoBehaviour
             ResetGridSquares();
             InitPixel();
         }
+
+        resetTimer += 1;
     }
+
+    //IEnumerator ScreenShot()
+    //{
+    //    print("befor");
+
+    //    DateTime now = DateTime.Now;
+
+    //    string dateTime = now.ToString();
+
+    //    dateTime = dateTime.Replace('/', '-');
+
+    //    dateTime = dateTime.Replace(":", "_");
+
+    //    ScreenCapture.CaptureScreenshot(ImagePath + "PixelImageSuccessful " + dateTime + ".png");
+
+    //    yield return new WaitForSeconds(3);
+
+    //    m_AgentGroup.EndGroupEpisode();
+    //    SetArrayToZero();
+    //    ResetGridSquares();
+    //    InitPixel();
+
+    //    print("after");
+    //}
 
     void SetAgent_XY_Coordinate()
     {
@@ -245,7 +260,6 @@ public class CanvasEnv : MonoBehaviour
         }
         return false;
     }
-
 
     /// <summary>
     /// Used to check the grid is ready
@@ -303,9 +317,9 @@ public class CanvasEnv : MonoBehaviour
 
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
         }
-        pictures.Clear();
+        //pictures.Clear();
         // Generate Picture
-        GenerateLocation(pictures);
+        //GenerateLocation(pictures);
     }
 
     void GenerateLocation(List<int> locations)
@@ -459,10 +473,3 @@ public class CanvasEnv : MonoBehaviour
         y = index - x * size;
     }
 }
-
-
-
-//  self assembly 
-
-
-
