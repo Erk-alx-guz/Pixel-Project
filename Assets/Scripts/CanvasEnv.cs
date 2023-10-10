@@ -171,6 +171,16 @@ public class CanvasEnv : MonoBehaviour
 
         //All
 
+        if (TakenGridSquares() == pictures.Count)
+        {
+            resetTimer = 0;
+
+            m_AgentGroup.EndGroupEpisode();
+            SetArrayToZero();
+            ResetGridSquares();
+            InitPixel();
+        }
+
         resetTimer += 1;
         //Debug.Log(resetTimer.ToString());
         if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
