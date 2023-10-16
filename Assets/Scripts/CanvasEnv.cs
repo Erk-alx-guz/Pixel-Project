@@ -55,7 +55,7 @@ public class CanvasEnv : MonoBehaviour
     [HideInInspector]
     public List<int> pictures = new();
 
-    //[HideInInspector]
+    [HideInInspector]
     public List<int> agentLocation = new();
 
     float totalAgentGroupReward = 0;
@@ -74,16 +74,6 @@ public class CanvasEnv : MonoBehaviour
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             canvas[Convert(pictures[i], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;
-        }
-
-        //  Fill the rest of canvas and environment with zeros
-        for (int i = 0; i < MAX_MATRIX_SIZE; i++)
-        {
-            for (int j = 0; j < MAX_MATRIX_SIZE; j++)
-            {
-                if (canvas[i * MAX_MATRIX_SIZE + j] != 1)
-                    canvas[i * MAX_MATRIX_SIZE + j] = 0;
-            }
         }
 
         for (int i = 0; i < CURRENT_MATRIX_SIZE; i++)
@@ -109,31 +99,35 @@ public class CanvasEnv : MonoBehaviour
     void Update()
     {
         float dif = 0;
-
+       
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
             VisualizeImage();
 
-            dif = Mathf.Abs(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2) - totalAgentGroupReward);
+            m_AgentGroup.AddGroupReward(Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2));
 
-            if (takenHistory < TakenGridSquares())
-            {
-                takenHistory = TakenGridSquares();
+            //dif = Mathf.Pow((float)TakenGridSquares() / NUMBER_OF_AGENTS, 2) - totalAgentGroupReward;
 
-                totalAgentGroupReward += dif;
+            //if (takenHistory < TakenGridSquares())
+            //{
+            //    takenHistory = TakenGridSquares();
 
-                for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
-                    m_AgentGroup.AddGroupReward(totalAgentGroupReward);
-            }
-            else if (takenHistory > TakenGridSquares())
-            {
-                takenHistory = TakenGridSquares();
+            //    totalAgentGroupReward += dif;
 
-                totalAgentGroupReward -= dif;
+            //    for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+            //        m_AgentGroup.AddGroupReward(dif);
+            //    print(totalAgentGroupReward);
+            //}
+            //else if (takenHistory > TakenGridSquares())
+            //{
+            //    takenHistory = TakenGridSquares();
 
-                for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
-                    m_AgentGroup.AddGroupReward(totalAgentGroupReward);
-            }            
+            //    totalAgentGroupReward += dif;
+
+            //    for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+            //        m_AgentGroup.AddGroupReward(dif);
+            //    print(totalAgentGroupReward);
+            //}
         }
     }
 
@@ -141,18 +135,30 @@ public class CanvasEnv : MonoBehaviour
     {
         SetAgent_XY_Coordinate();
 
+        //  NOTE THIS ONLY WORKS BECAUSE MAX AND CURRENT ARE THE SAME SIZE
+        //  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+        for (int i = 0; i < MAX_MATRIX_SIZE * MAX_MATRIX_SIZE; i++)
+        {
+            if (agentLocation.Contains(i))      //  to make it work when max and cur are different make an agen location list holding max index
+                environment[i] = 1;
+            else
+                environment[i] = 0;
+        }
+
+        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        //  NOTE THIS ONLY WORKS BECAUSE MAX AND CURRENT ARE THE SAME SIZE
+
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             agentLocation[i] = pixelAgent[i].gridLocation;
 
             for (int j = 0; j < NUMBER_OF_AGENTS; j++)
             {
-
                 if (pictures[j] == pixelAgent[i].gridLocation)                                       // if agent is in a picture location
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 0;          // change location to zero 0
                 else if (!agentLocation.Contains(pictures[j]))
                     canvas[Convert(pictures[j], CURRENT_MATRIX_SIZE, MAX_MATRIX_SIZE)] = 1;          // No other agent is occupying the grid square
-
             }
         }
 
@@ -166,6 +172,7 @@ public class CanvasEnv : MonoBehaviour
         //    SetArrayToZero();
         //    ResetGridSquares();
         //    InitPixel();
+        //    rewardSum = 0;
         //}
 
         if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
@@ -185,7 +192,7 @@ public class CanvasEnv : MonoBehaviour
             //ScreenCapture.CaptureScreenshot(ImagePath + "PixelOutOfBoundary " + dateTime + ".png");
 
             resetTimer = 0;
-            m_AgentGroup.AddGroupReward(-1);
+            m_AgentGroup.AddGroupReward(-0.5f);
 
             m_AgentGroup.EndGroupEpisode();
             SetArrayToZero();
@@ -311,15 +318,18 @@ public class CanvasEnv : MonoBehaviour
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            ToIndex(CURRENT_MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
-            //ToIndex(CURRENT_MATRIX_SIZE, pictures[i], ref x, ref z);       //  Fixed spawn
+            if(UnityEngine.Random.Range(0,4) == 0)
+                ToIndex(CURRENT_MATRIX_SIZE, pictures[i], ref x, ref z);       //  Fixed spawn
+            else
+                ToIndex(CURRENT_MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
+
             pixel_RB[i].transform.localPosition = new Vector3(cordList[x], 0.5f, cordList[z]);
 
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
         }
-        //pictures.Clear();
-        // Generate Picture
-        //GenerateLocation(pictures);
+        pictures.Clear();
+        //Generate Picture
+        GenerateLocation(pictures);
     }
 
     void GenerateLocation(List<int> locations)
