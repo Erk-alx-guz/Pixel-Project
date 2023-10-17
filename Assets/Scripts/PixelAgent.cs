@@ -60,8 +60,6 @@ public class PixelAgent : Agent
 
         sensor.AddObservation(agent_y_coordinate);              //  1
 
-        sensor.AddObservation(outOfBoundary);                   //  1
-
         sensor.AddObservation(done);                            //  1
     }
 
@@ -91,7 +89,6 @@ public class PixelAgent : Agent
         }
     }
 
-
     /// <summary>
     /// When hitting another pixel at a fasl velocity give bad reward
     /// 
@@ -100,9 +97,9 @@ public class PixelAgent : Agent
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 2 || Mathf.Abs(pixel_RB.velocity.z) > 2))
+        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 3 || Mathf.Abs(pixel_RB.velocity.z) > 3))
         {
-            AddReward(-0.5f);
+            AddReward(-0.05f);
         }
     }
 
