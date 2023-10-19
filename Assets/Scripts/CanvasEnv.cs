@@ -61,9 +61,6 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pictures.Add(34);
-        pictures.Add(19);
-
         GridSquareDrop();
         InitPixel();
 
@@ -182,7 +179,7 @@ public class CanvasEnv : MonoBehaviour
                 InitPixel();
             }
 
-            float maxTiltAngle = 45f;
+            float maxTiltAngle = 40f;
             float tiltAgle = Vector3.Angle(pixelAgent[0].transform.up, Vector3.up);
 
             if (tiltAgle > maxTiltAngle)     //  if agent is flipped on side or belly up
@@ -319,9 +316,9 @@ public class CanvasEnv : MonoBehaviour
 
         GenerateLocation(agentLocation);
 
-        //pictures.Clear();
-        ////Generate Picture
-        //GenerateLocation(pictures);
+        pictures.Clear();
+        //Generate Picture
+        GenerateLocation(pictures);
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
