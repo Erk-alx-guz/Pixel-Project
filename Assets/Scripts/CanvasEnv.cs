@@ -61,6 +61,9 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pictures.Add(34);
+        pictures.Add(19);
+
         GridSquareDrop();
         InitPixel();
 
@@ -316,9 +319,9 @@ public class CanvasEnv : MonoBehaviour
 
         GenerateLocation(agentLocation);
 
-        pictures.Clear();
-        //Generate Picture
-        GenerateLocation(pictures);
+        //pictures.Clear();
+        ////Generate Picture
+        //GenerateLocation(pictures);
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
@@ -336,8 +339,6 @@ public class CanvasEnv : MonoBehaviour
     void GenerateLocation(List<int> locations)
     {
         locations.Clear();
-        Hashtable gridSquaresTaken = new();
-        string key;
         int xPos, zPos;
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
@@ -346,9 +347,7 @@ public class CanvasEnv : MonoBehaviour
             {
                 xPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
                 zPos = UnityEngine.Random.Range(0, CURRENT_MATRIX_SIZE);
-                key = string.Format("{0:N2}", xPos);
-                key += string.Format("{0:N2}", zPos);
-            } while (gridSquaresTaken[key] != null);           //  check if the location is taken 
+            } while (locations.Contains(xPos * CURRENT_MATRIX_SIZE + zPos));           //  check if the location is taken 
 
             locations.Add(xPos * CURRENT_MATRIX_SIZE + zPos);
         }
