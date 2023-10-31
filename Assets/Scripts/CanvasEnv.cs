@@ -142,7 +142,7 @@ public class CanvasEnv : MonoBehaviour
 
             resetTimer = 0;
 
-            m_AgentGroup.AddGroupReward(NUMBER_OF_AGENTS);
+            m_AgentGroup.AddGroupReward(2);
 
             m_AgentGroup.EndGroupEpisode();
             SetArrayToZero();
