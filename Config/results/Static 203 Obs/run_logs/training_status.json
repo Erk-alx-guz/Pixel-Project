@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 80999966,
+                "file_path": "results\\pixel_40\\Pixel\\Pixel-80999966.onnx",
+                "reward": 0.0,
+                "creation_time": 1698031429.4519703,
+                "auxillary_file_paths": [
+                    "results\\pixel_40\\Pixel\\Pixel-80999966.pt"
+                ]
+            },
+            {
+                "steps": 81499987,
+                "file_path": "results\\pixel_40\\Pixel\\Pixel-81499987.onnx",
+                "reward": 0.0,
+                "creation_time": 1698032948.9603927,
+                "auxillary_file_paths": [
+                    "results\\pixel_40\\Pixel\\Pixel-81499987.pt"
+                ]
+            },
+            {
+                "steps": 81999962,
+                "file_path": "results\\pixel_40\\Pixel\\Pixel-81999962.onnx",
+                "reward": 0.0,
+                "creation_time": 1698034456.6806898,
+                "auxillary_file_paths": [
+                    "results\\pixel_40\\Pixel\\Pixel-81999962.pt"
+                ]
+            },
+            {
+                "steps": 82499930,
+                "file_path": "results\\pixel_40\\Pixel\\Pixel-82499930.onnx",
+                "reward": 0.0,
+                "creation_time": 1698035973.8618588,
+                "auxillary_file_paths": [
+                    "results\\pixel_40\\Pixel\\Pixel-82499930.pt"
+                ]
+            },
+            {
+                "steps": 82500810,
+                "file_path": "results\\pixel_40\\Pixel\\Pixel-82500810.onnx",
+                "reward": null,
+                "creation_time": 1698035978.475285,
+                "auxillary_file_paths": [
+                    "results\\pixel_40\\Pixel\\Pixel-82500810.pt"
+                ]
+            }
+        ],
+        "elo": 976.1009460735702,
+        "final_checkpoint": {
+            "steps": 82500810,
+            "file_path": "results\\pixel_40\\Pixel.onnx",
+            "reward": null,
+            "creation_time": 1698035978.475285,
+            "auxillary_file_paths": [
+                "results\\pixel_40\\Pixel\\Pixel-82500810.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.13.1"
+    }
+}
