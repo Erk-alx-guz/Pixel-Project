@@ -107,6 +107,8 @@ public class CanvasEnv : MonoBehaviour
 
     void FixedUpdate()
     {
+        m_AgentGroup.AddGroupReward(-0.0001f);
+
         SetAgent_XY_Coordinate();
 
         //  NOTE THIS ONLY WORKS BECAUSE MAX AND CURRENT ARE THE SAME SIZE
