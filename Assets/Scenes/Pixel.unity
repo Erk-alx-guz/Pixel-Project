@@ -784,8 +784,8 @@ MonoBehaviour:
   - {fileID: 892993087}
   - {fileID: 1498387910}
   controlAgent: 0
-  gridSquare: {fileID: 1732532665}
-  GridSquares: []
+  gridLocation: {fileID: 1732532665}
+  GridLocation: []
   MaxEnvironmentSteps: 10000
   pictures: 
   agentLocation: 
