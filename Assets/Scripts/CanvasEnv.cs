@@ -39,7 +39,7 @@ public class CanvasEnv : MonoBehaviour
 
     private int resetTimer;
 
-    [HideInInspector]
+    //[HideInInspector]
     public List<int> pictures = new();
 
     [HideInInspector]
@@ -271,7 +271,8 @@ public class CanvasEnv : MonoBehaviour
         pictures.Clear();
 
         //Generate Picture
-        GenerateLocation(pictures);
+        //GenerateLocation(pictures);       //  Random
+        SelectImageSet(pictures);           //  Set of 4
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
@@ -283,6 +284,35 @@ public class CanvasEnv : MonoBehaviour
             pixel_RB[i].transform.localPosition = new Vector3(cordListX[x], gridLocation.transform.localPosition.y, cordListZ[z]);
 
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
+        }
+    }
+
+    void SelectImageSet(List<int> image)
+    {
+        image.Clear();
+
+        int select;
+
+        select = UnityEngine.Random.Range(1, 5);
+
+        switch (select)
+        {
+            case 1:
+                image.Add(65); 
+                image.Add(33);
+                break;
+            case 2:
+                image.Add(21);
+                image.Add(79);
+                break;
+            case 3:
+                image.Add(50);
+                image.Add(92);
+                break;
+            case 4:
+                image.Add(8);
+                image.Add(71);
+                break;
         }
     }
 
