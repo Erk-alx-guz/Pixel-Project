@@ -232,15 +232,9 @@ public class CanvasEnv : MonoBehaviour
                     GridLocation.Add(Instantiate(gridLocation, new Vector3(cordListX[i], gridLocation.transform.position.y, cordListZ[j]), Quaternion.identity));             //  gameObject
 
                 if (index < 10)
-                {
-                    UnityEditorInternal.InternalEditorUtility.AddTag('0' + index.ToString());       //  creat tag
                     GridLocation[index].tag = '0' + index.ToString();                                //  assign tag
-                }   
                 else
-                {
-                    UnityEditorInternal.InternalEditorUtility.AddTag(index.ToString());
                     GridLocation[index].tag = index.ToString();
-                }
             }
         }
     }
