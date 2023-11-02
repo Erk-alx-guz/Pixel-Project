@@ -1,6 +1,9 @@
 //using UnityEngine;
 //using UnityEditor;
 
+///// <summary>
+///// This script adds more tags to avoid adding them manually 
+///// </summary>
 //public class CreateTagsEditor : EditorWindow
 //{
 //    [MenuItem("Tools/Create Tags")]
