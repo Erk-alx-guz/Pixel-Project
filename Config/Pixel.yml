@@ -2,8 +2,8 @@ behaviors:
   Pixel:
     trainer_type: poca
     hyperparameters:
-      batch_size: 2048
-      buffer_size: 8192
+      batch_size: 8192
+      buffer_size: 81920
       learning_rate: 0.0002
       beta: 0.003
       epsilon: 0.8
