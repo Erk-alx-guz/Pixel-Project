@@ -6,10 +6,11 @@ behaviors:
       buffer_size: 143360
       learning_rate: 0.0002
       beta: 0.003
-      epsilon: 0.8
+      epsilon: 0.6
       lambd: 0.93
       num_epoch: 4
-      learning_rate_schedule: constant
+      learning_rate_schedule: linear
+      epsilon_schedule: linear
     network_settings:
       normalize: true
       hidden_units: 512
