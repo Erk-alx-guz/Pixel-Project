@@ -9,7 +9,7 @@ public class CanvasEnv : MonoBehaviour
 {
     const int MATRIX_SIZE = 10;
 
-    const int NUMBER_OF_AGENTS = 2;
+    const int NUMBER_OF_AGENTS = 4;
 
     //  Matrix of how the environment looks
     public float[] environment = new float[MATRIX_SIZE * MATRIX_SIZE];
@@ -140,6 +140,8 @@ public class CanvasEnv : MonoBehaviour
             float maxTiltAngle = 40f;
             float tiltAngle = Vector3.Angle(pixelAgent[i].transform.up, Vector3.up);
 
+            print("Pixel: " + i + " Pix-Tilt: " + tiltAngle + " Max-Tilt: " + maxTiltAngle);
+
             if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
             {
                 resetTimer = 0;
@@ -267,7 +269,9 @@ public class CanvasEnv : MonoBehaviour
 
         //Spawn agent in top left corner
         agentLocation.Add(0);
-        agentLocation.Add(1);
+        agentLocation.Add(1);        
+        agentLocation.Add(2);
+        agentLocation.Add(3);
 
         pictures.Clear();
         SelectImageSet(pictures);           //  Set of 2
@@ -295,10 +299,15 @@ public class CanvasEnv : MonoBehaviour
             case 1:
                 image.Add(65); 
                 image.Add(33);
+                image.Add(15); 
+                image.Add(80);
                 break;
             case 2:
                 image.Add(21);
                 image.Add(79);
+                image.Add(19);
+                image.Add(51);
+
                 break;
         }
     }
