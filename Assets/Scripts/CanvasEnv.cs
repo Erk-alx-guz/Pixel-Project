@@ -265,21 +265,16 @@ public class CanvasEnv : MonoBehaviour
 
         agentLocation.Clear();
 
-        //Spawn agent in a random location
-        GenerateLocation(agentLocation);
+        //Spawn agent in top left corner
+        agentLocation.Add(0);
+        agentLocation.Add(1);
 
         pictures.Clear();
-
-        //Generate Picture
-        //GenerateLocation(pictures);       //  Random
-        SelectImageSet(pictures);           //  Set of 4
+        SelectImageSet(pictures);           //  Set of 2
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            if (UnityEngine.Random.Range(0, 4) == 0)
-                IndexToIndices(MATRIX_SIZE, pictures[i], ref x, ref z);       //  Fixed spawn
-            else
-                IndexToIndices(MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
+            IndexToIndices(MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
 
             pixel_RB[i].transform.localPosition = new Vector3(cordListX[x], gridLocation.transform.localPosition.y, cordListZ[z]);
 
@@ -293,7 +288,7 @@ public class CanvasEnv : MonoBehaviour
 
         int select;
 
-        select = UnityEngine.Random.Range(1, 5);
+        select = UnityEngine.Random.Range(1, 3);
 
         switch (select)
         {
@@ -305,19 +300,11 @@ public class CanvasEnv : MonoBehaviour
                 image.Add(21);
                 image.Add(79);
                 break;
-            case 3:
-                image.Add(50);
-                image.Add(92);
-                break;
-            case 4:
-                image.Add(8);
-                image.Add(71);
-                break;
         }
     }
 
     /// <summary>
-    /// Generate location for agent to spawned or generate target location for image
+    /// Generate random location for agent to spawned or generate target location for image
     /// </summary>
     /// <param name="locations"></param>
     void GenerateLocation(List<int> locations)
