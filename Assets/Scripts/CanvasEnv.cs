@@ -140,8 +140,6 @@ public class CanvasEnv : MonoBehaviour
             float maxTiltAngle = 40f;
             float tiltAngle = Vector3.Angle(pixelAgent[i].transform.up, Vector3.up);
 
-            print("Pixel: " + i + " Pix-Tilt: " + tiltAngle + " Max-Tilt: " + maxTiltAngle);
-
             if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
             {
                 resetTimer = 0;
@@ -153,7 +151,7 @@ public class CanvasEnv : MonoBehaviour
             }
         }
 
-        if (TakenTargetLocations() == pictures.Count)
+        if (TakenTargetLocations() == NUMBER_OF_AGENTS)
         {
 
             resetTimer = 0;
