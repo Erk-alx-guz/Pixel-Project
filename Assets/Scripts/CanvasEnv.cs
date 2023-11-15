@@ -9,7 +9,7 @@ public class CanvasEnv : MonoBehaviour
 {
     const int MATRIX_SIZE = 10;
 
-    const int NUMBER_OF_AGENTS = 4;
+    const int NUMBER_OF_AGENTS = 2;
 
     //  Matrix of how the environment looks
     public float[] environment = new float[MATRIX_SIZE * MATRIX_SIZE];
@@ -295,15 +295,15 @@ public class CanvasEnv : MonoBehaviour
         switch (select)
         {
             case 1:
-                image.Add(65); 
+                //image.Add(65); 
                 image.Add(33);
                 image.Add(15); 
-                image.Add(80);
+                //image.Add(80);
                 break;
             case 2:
                 image.Add(21);
-                image.Add(79);
-                image.Add(19);
+                //image.Add(79);
+                //image.Add(19);
                 image.Add(51);
 
                 break;
