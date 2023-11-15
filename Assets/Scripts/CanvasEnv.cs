@@ -271,8 +271,13 @@ public class CanvasEnv : MonoBehaviour
         agentLocation.Add(2);
         agentLocation.Add(3);
 
-        pictures.Clear();
-        SelectImageSet(pictures);           //  Set of 2
+        pictures.Add(65);
+        pictures.Add(33);
+        pictures.Add(15);
+        pictures.Add(80);
+
+        //pictures.Clear();
+        //SelectImageSet(pictures);           //  Set of 2
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
