@@ -9,7 +9,7 @@ public class CanvasEnv : MonoBehaviour
 {
     const int MATRIX_SIZE = 10;
 
-    const int NUMBER_OF_AGENTS = 2;
+    const int NUMBER_OF_AGENTS = 8;
 
     //  Matrix of how the environment looks
     public float[] environment = new float[MATRIX_SIZE * MATRIX_SIZE];
@@ -268,9 +268,24 @@ public class CanvasEnv : MonoBehaviour
         //Spawn agent in top left corner
         agentLocation.Add(0);
         agentLocation.Add(1);
+        agentLocation.Add(2);
+        agentLocation.Add(3);
+        agentLocation.Add(4);
+        agentLocation.Add(5);
+        agentLocation.Add(6);
+        agentLocation.Add(7);
 
-        pictures.Clear();
-        SelectImageSet(pictures);           //  Set of 2
+        pictures.Add(33);
+        pictures.Add(36);
+        pictures.Add(52);
+        pictures.Add(57);
+        pictures.Add(63);
+        pictures.Add(66);
+        pictures.Add(74);
+        pictures.Add(75);
+
+        //pictures.Clear();
+        //SelectImageSet(pictures);           //  Set of 2
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
