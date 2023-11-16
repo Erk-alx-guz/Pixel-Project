@@ -267,7 +267,7 @@ public class CanvasEnv : MonoBehaviour
 
         //Spawn agent in top left corner
         agentLocation.Add(0);
-        agentLocation.Add(1);     
+        agentLocation.Add(1);
 
         pictures.Clear();
         SelectImageSet(pictures);           //  Set of 2
