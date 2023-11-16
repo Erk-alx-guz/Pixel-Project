@@ -293,15 +293,11 @@ public class CanvasEnv : MonoBehaviour
         switch (select)
         {
             case 1:
-                //image.Add(65); 
                 image.Add(33);
-                image.Add(15); 
-                //image.Add(80);
+                image.Add(15);
                 break;
             case 2:
                 image.Add(21);
-                //image.Add(79);
-                //image.Add(19);
                 image.Add(51);
 
                 break;
