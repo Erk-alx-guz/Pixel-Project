@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 98499972,
+                "file_path": "results/pixel-s2a2l-000/Pixel/Pixel-98499972.onnx",
+                "reward": 0.0,
+                "creation_time": 1700240728.005244,
+                "auxillary_file_paths": [
+                    "results/pixel-s2a2l-000/Pixel/Pixel-98499972.pt"
+                ]
+            },
+            {
+                "steps": 98999874,
+                "file_path": "results/pixel-s2a2l-000/Pixel/Pixel-98999874.onnx",
+                "reward": 0.0,
+                "creation_time": 1700241072.970817,
+                "auxillary_file_paths": [
+                    "results/pixel-s2a2l-000/Pixel/Pixel-98999874.pt"
+                ]
+            },
+            {
+                "steps": 99499982,
+                "file_path": "results/pixel-s2a2l-000/Pixel/Pixel-99499982.onnx",
+                "reward": 0.0,
+                "creation_time": 1700241428.4414332,
+                "auxillary_file_paths": [
+                    "results/pixel-s2a2l-000/Pixel/Pixel-99499982.pt"
+                ]
+            },
+            {
+                "steps": 99999910,
+                "file_path": "results/pixel-s2a2l-000/Pixel/Pixel-99999910.onnx",
+                "reward": 0.0,
+                "creation_time": 1700241779.9114013,
+                "auxillary_file_paths": [
+                    "results/pixel-s2a2l-000/Pixel/Pixel-99999910.pt"
+                ]
+            },
+            {
+                "steps": 100010662,
+                "file_path": "results/pixel-s2a2l-000/Pixel/Pixel-100010662.onnx",
+                "reward": 0.0,
+                "creation_time": 1700241781.2582319,
+                "auxillary_file_paths": [
+                    "results/pixel-s2a2l-000/Pixel/Pixel-100010662.pt"
+                ]
+            }
+        ],
+        "elo": 585.3709721415267,
+        "final_checkpoint": {
+            "steps": 100010662,
+            "file_path": "results/pixel-s2a2l-000/Pixel.onnx",
+            "reward": 0.0,
+            "creation_time": 1700241781.2582319,
+            "auxillary_file_paths": [
+                "results/pixel-s2a2l-000/Pixel/Pixel-100010662.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.1.0"
+    }
+}
