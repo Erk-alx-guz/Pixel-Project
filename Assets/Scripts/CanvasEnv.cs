@@ -14,9 +14,6 @@ public class CanvasEnv : MonoBehaviour
     //  Matrix of how the environment looks
     public float[] environment = new float[MATRIX_SIZE * MATRIX_SIZE];
 
-    //  Matrix of how the pixel art looks
-    public float[] canvas = new float[MATRIX_SIZE * MATRIX_SIZE];
-
     //  Array of the Agent scripts to 
     [Header("Agent List")]
     public PixelAgent[] pixelAgent = new PixelAgent[NUMBER_OF_AGENTS];
@@ -74,7 +71,7 @@ public class CanvasEnv : MonoBehaviour
        
         if (EnvironmentReady())  //  The environment must be set up befor doing anything
         {
-            VisualizeImage();
+            //VisualizeImage();
 
             dif = Mathf.Pow((float)TakenTargetLocations() / NUMBER_OF_AGENTS, 2) - totalAgentGroupReward;
 
@@ -111,19 +108,17 @@ public class CanvasEnv : MonoBehaviour
                 environment[i] = 1;
             else                                                                                   //  agent is not at i
                 environment[i] = 0;
+
+            for (int j = 0; j < NUMBER_OF_AGENTS; j++)
+            {
+                if (!agentLocation.Contains(pictures[j]))
+                    environment[pictures[j]] = -1;
+            }
         }
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             agentLocation[i] = pixelAgent[i].gridLocation;
-
-            for (int j = 0; j < NUMBER_OF_AGENTS; j++)
-            {
-                if (pictures[j] == pixelAgent[i].gridLocation)                                     // if agent is in a picture location
-                    canvas[pictures[j]] = 0;                                                       // change location to zero 0
-                else if (!agentLocation.Contains(pictures[j]))
-                    canvas[pictures[j]] = 1;                                                       // No other agent is occupying the grid location
-            }
 
             if (pixelAgent[i].transform.localPosition.y < gridLocation.transform.localPosition.y)    //  pixel falls out
             {
@@ -188,7 +183,7 @@ public class CanvasEnv : MonoBehaviour
     {
         for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++)
         {
-            canvas[i] = 0;
+            environment[i] = 0;
         }
     }
 
@@ -272,6 +267,8 @@ public class CanvasEnv : MonoBehaviour
         pictures.Clear();
         SelectImageSet(pictures);           //  Set of 2
 
+        //GenerateLocation(pictures);
+
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             IndexToIndices(MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
@@ -293,12 +290,12 @@ public class CanvasEnv : MonoBehaviour
         switch (select)
         {
             case 1:
-                image.Add(65); 
-                image.Add(33);
+                image.Add(18); 
+                image.Add(55);
                 break;
             case 2:
                 image.Add(21);
-                image.Add(79);
+                image.Add(90);
                 break;
         }
     }
@@ -379,12 +376,14 @@ public class CanvasEnv : MonoBehaviour
 
     void VisualizeImage()
     {
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++)
         {
-            if (canvas[pictures[i]] == 1)
-                GridLocation[pictures[i]].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
+            if (environment[i] == 0)
+                GridLocation[i].GetComponent<Renderer>().material.color = new Color(0, 213, 255, 0.80f);
+            else if (environment[i] == -1)
+                GridLocation[i].GetComponent<Renderer>().material.color = new Color(255, 225, 0, 1f);
             else
-                GridLocation[pictures[i]].GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0f);
+                GridLocation[i].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
         }
     }
 

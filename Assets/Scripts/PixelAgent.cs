@@ -54,8 +54,6 @@ public class PixelAgent : Agent
     {
         sensor.AddObservation(env.environment);                 //  100
 
-        sensor.AddObservation(env.canvas);                      //  100
-
         sensor.AddObservation(agent_x_coordinate);              //  1
 
         sensor.AddObservation(agent_y_coordinate);              //  1
