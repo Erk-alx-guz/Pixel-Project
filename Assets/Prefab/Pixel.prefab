@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: 4542165988249419698}
   - component: {fileID: 2154488907740792386}
   - component: {fileID: 1621987279061274035}
+  - component: {fileID: -3553154659001798163}
   m_Layer: 0
   m_Name: Pixel
   m_TagString: Pixel
@@ -325,6 +326,11 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   env: {fileID: 0}
+  gridLocation: 0
+  done: 0
+  outOfBoundary: 0
+  agent_x_coordinate: 0
+  agent_y_coordinate: 0
 --- !u!114 &1621987279061274035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,6 +345,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
+--- !u!114 &-3553154659001798163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2635456003861847142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: RayPerceptionSensor
+  m_DetectableTags: []
+  m_RaysPerDirection: 5
+  m_MaxRayDegrees: 165
+  m_SphereCastRadius: 0.7
+  m_RayLength: 2.5
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_ObservationStacks: 1
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0
+  m_EndVerticalOffset: 0
 --- !u!1 &5701057837456231003
 GameObject:
   m_ObjectHideFlags: 0

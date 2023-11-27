@@ -82,11 +82,8 @@ public class PixelAgent : Agent
         var vectorAction = actionBuffers.ContinuousActions;
 
         //  Don't do anything untill the environment is ready
-        if (env.EnvironmentReady())
-        {
-            pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
-            pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
-        }
+        pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
+        pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
     }
 
     /// <summary>
@@ -106,12 +103,25 @@ public class PixelAgent : Agent
 
     private void OnTriggerStay(Collider other)
     {
+        int integerNumber;
         if (other.tag != "Pixel")
         {
             if (other.bounds.Contains(coll.bounds.center))
             {
-                gridLocation = (other.tag[0] - 48) * 10;
-                gridLocation += other.tag[1] - 48;
+                if (int.TryParse(other.tag, out integerNumber))
+                {
+                    done = true;
+                    env.TakenTargets.Add(integerNumber);
+                    env.GridLocation[integerNumber].SetActive(false);
+                }
+                else
+                {
+                    Console.WriteLine("The string is not a valid integer.");
+                }
+            }
+            else
+            {
+                done = false;
             }
         }
     }
