@@ -20,17 +20,14 @@ public class PixelAgent : Agent
     private float horizontalInput;
     private float forwardInput;
 
-    public int gridLocation;
     Collider coll;
 
     public bool done = false;
 
-    public bool outOfBoundary = false;
-
     //  agent coordinate on big array
-    public int agent_x_coordinate;
+    public float agent_x_coordinate;
 
-    public int agent_y_coordinate;
+    public float agent_z_coordinate;
 
     void Start()
     {
@@ -48,17 +45,14 @@ public class PixelAgent : Agent
         //  Maybe set velocity to zero
         pixel_RB.velocity = Vector3.zero;
         pixel_RB.rotation = Quaternion.identity;
+        done = false;
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(env.environment);                 //  100
-
-        sensor.AddObservation(env.canvas);                      //  100
-
         sensor.AddObservation(agent_x_coordinate);              //  1
 
-        sensor.AddObservation(agent_y_coordinate);              //  1
+        sensor.AddObservation(agent_z_coordinate);              //  1
 
         sensor.AddObservation(done);                            //  1
     }
@@ -71,8 +65,11 @@ public class PixelAgent : Agent
         horizontalInput = Input.GetAxis("Horizontal");
         forwardInput = Input.GetAxis("Vertical");
 
-        pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-        pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+        if (!done)
+        {
+            pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
+            pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -81,9 +78,12 @@ public class PixelAgent : Agent
 
         var vectorAction = actionBuffers.ContinuousActions;
 
-        //  Don't do anything untill the environment is ready
-        pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
-        pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
+        if (!done)
+        {
+            //  Don't do anything untill the environment is ready
+            pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
+            pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
+        }
     }
 
     /// <summary>
@@ -111,17 +111,12 @@ public class PixelAgent : Agent
                 if (int.TryParse(other.tag, out integerNumber))
                 {
                     done = true;
-                    env.TakenTargets.Add(integerNumber);
                     env.GridLocation[integerNumber].SetActive(false);
                 }
                 else
                 {
                     Console.WriteLine("The string is not a valid integer.");
                 }
-            }
-            else
-            {
-                done = false;
             }
         }
     }

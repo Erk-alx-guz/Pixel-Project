@@ -11,12 +11,6 @@ public class CanvasEnv : MonoBehaviour
 
     const int NUMBER_OF_AGENTS = 2;
 
-    //  Matrix of how the environment looks
-    public float[] environment = new float[MATRIX_SIZE * MATRIX_SIZE];
-
-    //  Matrix of how the pixel art looks
-    public float[] canvas = new float[MATRIX_SIZE * MATRIX_SIZE];
-
     //  Array of the Agent scripts to 
     [Header("Agent List")]
     public PixelAgent[] pixelAgent = new PixelAgent[NUMBER_OF_AGENTS];
@@ -34,9 +28,6 @@ public class CanvasEnv : MonoBehaviour
     [HideInInspector]
     public List<GameObject> GridLocation = new List<GameObject>();
 
-
-    public List<int> TakenTargets = new List<int>();
-
     [Header("Max Steps")]
     public int MaxEnvironmentSteps;
 
@@ -49,13 +40,32 @@ public class CanvasEnv : MonoBehaviour
 
     float takenHistory = 0;
 
-    const string ImagePath = @"C:\Users\ML-Lab\Desktop\Erik\ML-Agents\Pixel\Images\";
+    float[] cordListX = new float[MATRIX_SIZE];
+
+    float[] cordListZ = new float[MATRIX_SIZE];
+
+    float startingCoordinatesX;
+    float startingCoordinatesZ;
+
+    const float canvasSizeConst = 11.29f;
 
     // Start is called before the first frame update
     void Start()
     {
+        startingCoordinatesX = gameObject.transform.position.x + canvasSizeConst;
+        startingCoordinatesZ = gameObject.transform.position.z + canvasSizeConst;
+
+        for (int i = 0; i < MATRIX_SIZE; i++)
+        {
+            cordListX[i] = startingCoordinatesX;
+            startingCoordinatesX -= 2.5f;
+
+            cordListZ[i] = startingCoordinatesZ;
+            startingCoordinatesZ -= 2.5f;
+        }
+
         GridLocationSpawner();
-        InitPixel();
+        ResetEnvironment();
 
         m_AgentGroup = new SimpleMultiAgentGroup();
         foreach (var agent in pixelAgent)
@@ -63,8 +73,6 @@ public class CanvasEnv : MonoBehaviour
             // Add to team manager
             m_AgentGroup.RegisterAgent(agent);
         }
-
-        resetTimer = 0;
     }
 
     // Update is called once per frame
@@ -96,71 +104,61 @@ public class CanvasEnv : MonoBehaviour
 
     void FixedUpdate()
     {
-        //m_AgentGroup.AddGroupReward(-0.0001f);
+        m_AgentGroup.AddGroupReward(-0.0001f);
 
-        //SetAgent_XY_Coordinate();
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            //  normalize location from 0 - 1
+            pixelAgent[i].agent_x_coordinate = Math.Abs(pixelAgent[i].transform.position.x - canvasSizeConst) / (canvasSizeConst * 2);
+            pixelAgent[i].agent_z_coordinate = Math.Abs(pixelAgent[i].transform.position.z - canvasSizeConst) / (canvasSizeConst * 2);
 
-        //for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++)
-        //{
-        //    if (agentLocation.Contains(i))                                                         //  agent is at i
-        //        environment[i] = 1;
-        //    else                                                                                   //  agent is not at i
-        //        environment[i] = 0;
-        //}
+            if (pixelAgent[i].transform.position.y < gameObject.transform.position.y)    //  pixel falls out
+            {
+                m_AgentGroup.AddGroupReward(-2);
 
-        //for (int i = 0; i < NUMBER_OF_AGENTS; i++)
-        //{
-        //    agentLocation[i] = pixelAgent[i].gridLocation;
+                m_AgentGroup.EndGroupEpisode();
+                ResetEnvironment();
+            }
 
-        //    for (int j = 0; j < NUMBER_OF_AGENTS; j++)
-        //    {
-        //        if (pictures[j] == pixelAgent[i].gridLocation)                                     // if agent is in a picture location
-        //            canvas[pictures[j]] = 0;                                                       // change location to zero 0
-        //        else if (!agentLocation.Contains(pictures[j]))
-        //            canvas[pictures[j]] = 1;                                                       // No other agent is occupying the grid location
-        //    }
+            float maxTiltAngle = 40f;
+            float tiltAngle = Vector3.Angle(pixelAgent[i].transform.up, Vector3.up);
 
-        //    if (pixelAgent[i].transform.localPosition.y < gridLocation.transform.localPosition.y)    //  pixel falls out
-        //    {
-        //        resetTimer = 0;
+            if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
+            {
+                m_AgentGroup.EndGroupEpisode();
+                ResetEnvironment();
+            }
+        }
 
-        //        m_AgentGroup.AddGroupReward(-2);
+        if (TakenTargetLocations() == pictures.Count)
+        {
+            m_AgentGroup.AddGroupReward(2);
 
-        //        m_AgentGroup.EndGroupEpisode();
-        //        InitPixel();
-        //    }
+            m_AgentGroup.EndGroupEpisode();
+            ResetEnvironment();
+        }
 
-        //    float maxTiltAngle = 40f;
-        //    float tiltAngle = Vector3.Angle(pixelAgent[i].transform.up, Vector3.up);
+        if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
+        {
+            m_AgentGroup.GroupEpisodeInterrupted();
+            ResetEnvironment();
+        }
+        resetTimer += 1;
+    }
 
-        //    if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
-        //    {
-        //        resetTimer = 0;
+    void ResetEnvironment()
+    {
+        resetTimer = 0;
 
-        //        m_AgentGroup.EndGroupEpisode();
-        //        InitPixel();
-        //    }
-        //}
+        for (int i = 0; i < GridLocation.Count; i++)
+        {
+            GridLocation[i].SetActive(false);
+        }
 
-        //if (TakenTargetLocations() == pictures.Count)
-        //{
-
-        //    resetTimer = 0;
-
-        //    m_AgentGroup.AddGroupReward(2);
-
-        //    m_AgentGroup.EndGroupEpisode();
-        //    InitPixel();
-        //}
-
-        //if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
-        //{
-        //    resetTimer = 0;
-
-        //    m_AgentGroup.GroupEpisodeInterrupted();
-        //    InitPixel();
-        //}
-        //resetTimer += 1;
+        pictures.Clear();
+        SelectImageSet(pictures);           //  Set of 2
+        SpawnFromPool(pictures);
+        InitPixel();
     }
 
     //  Spawn all grid locations
@@ -168,7 +166,7 @@ public class CanvasEnv : MonoBehaviour
     {
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            GameObject targetLocation = Instantiate(gridLocation, Vector3.zero, Quaternion.identity);
+            GameObject targetLocation = Instantiate(gridLocation, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 0.625f, gameObject.transform.position.z), Quaternion.identity);
             targetLocation.tag = i.ToString();
             targetLocation.SetActive(false);
             GridLocation.Add(targetLocation);   //  create and place grid location            //  gameObject
@@ -177,29 +175,13 @@ public class CanvasEnv : MonoBehaviour
 
     public void SpawnFromPool(List<int> targetLocations)
     {
-        float[] cordListX = new float[MATRIX_SIZE];
-
-        float[] cordListZ = new float[MATRIX_SIZE];
-
-        float startingCoordinatesX = gameObject.transform.position.x + 11.25f;
-        float startingCoordinatesZ = gameObject.transform.position.z + 11.25f;
-
-        for (int i = 0; i < MATRIX_SIZE; i++)
-        {
-            cordListX[i] = startingCoordinatesX;
-            startingCoordinatesX -= 2.5f;
-
-            cordListZ[i] = startingCoordinatesZ;
-            startingCoordinatesZ -= 2.5f;
-        }
-
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
             int x = 0, z = 0;
 
             IndexToIndices(MATRIX_SIZE, targetLocations[i], ref x, ref z);
 
-            Vector3 position = new Vector3(cordListX[x], 0.625f, cordListZ[z]);
+            Vector3 position = new Vector3(cordListX[x], gameObject.transform.position.y + 0.625f, cordListZ[z]);
 
             if (!GridLocation[i].activeInHierarchy)
             {
@@ -216,30 +198,10 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void InitPixel()
     {
-        float[] cordListX = new float[MATRIX_SIZE];
-
-        float[] cordListZ = new float[MATRIX_SIZE];
-
-        float startingCoordinatesX = gameObject.transform.position.x + 11.25f;
-        float startingCoordinatesZ = gameObject.transform.position.z + 11.25f;
-
-        for (int i = 0; i < MATRIX_SIZE; i++)
-        {
-            cordListX[i] = startingCoordinatesX;
-            startingCoordinatesX -= 2.5f;
-
-            cordListZ[i] = startingCoordinatesZ;
-            startingCoordinatesZ -= 2.5f;
-        }
-
-        pictures.Clear();
-        SelectImageSet(pictures);           //  Set of 2
-
-        SpawnFromPool(pictures);
-
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            pixel_RB[i].transform.position = new Vector3(cordListX[0], 0.625f, cordListZ[i]);
+            //  index for x should be 0
+            pixel_RB[i].transform.position = new Vector3(cordListX[0], gameObject.transform.position.y + 0.625f, cordListZ[i]);
 
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
         }
@@ -293,19 +255,12 @@ public class CanvasEnv : MonoBehaviour
     /// <returns></returns>
     int TakenTargetLocations()
     {
-        HashSet<int> gridLocationsTaken = new HashSet<int>();
         int takenSpots = 0;
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        for (int i = 0; i < GridLocation.Count; i++)
         {
-            if (pictures.Contains(pixelAgent[i].gridLocation) && !gridLocationsTaken.Contains(pixelAgent[i].gridLocation))
-            {
+            if (!GridLocation[i].activeInHierarchy)
                 takenSpots++;
-                gridLocationsTaken.Add(pixelAgent[i].gridLocation);
-            }
-            else
-                gridLocationsTaken.Remove(pixelAgent[i].gridLocation);
         }
-        gridLocationsTaken.Clear();
         return takenSpots;
     }
 
