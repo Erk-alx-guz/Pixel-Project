@@ -11,12 +11,6 @@ public class CanvasEnv : MonoBehaviour
 
     const int NUMBER_OF_AGENTS = 2;
 
-    //  Matrix of how the environment looks
-    public float[] environment = new float[MATRIX_SIZE * MATRIX_SIZE];
-
-    //  Matrix of how the pixel art looks
-    public float[] canvas = new float[MATRIX_SIZE * MATRIX_SIZE];
-
     //  Array of the Agent scripts to 
     [Header("Agent List")]
     public PixelAgent[] pixelAgent = new PixelAgent[NUMBER_OF_AGENTS];
@@ -42,173 +36,24 @@ public class CanvasEnv : MonoBehaviour
     //[HideInInspector]
     public List<int> pictures = new();
 
-    [HideInInspector]
-    public List<int> agentLocation = new();
-
     float totalAgentGroupReward = 0;
 
     float takenHistory = 0;
 
-    const string ImagePath = @"C:\Users\ML-Lab\Desktop\Erik\ML-Agents\Pixel\Images\";
+    float[] cordListX = new float[MATRIX_SIZE];
+
+    float[] cordListZ = new float[MATRIX_SIZE];
+
+    float startingCoordinatesX;
+    float startingCoordinatesZ;
+
+    const float canvasSizeConst = 11.29f;
 
     // Start is called before the first frame update
     void Start()
     {
-        GridLocationSpawner();
-        InitPixel();
-
-        m_AgentGroup = new SimpleMultiAgentGroup();
-        foreach (var agent in pixelAgent)
-        {
-            // Add to team manager
-            m_AgentGroup.RegisterAgent(agent);
-        }
-
-        resetTimer = 0;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        float dif = 0;
-       
-        if (EnvironmentReady())  //  The environment must be set up befor doing anything
-        {
-            VisualizeImage();
-
-            dif = Mathf.Pow((float)TakenTargetLocations() / NUMBER_OF_AGENTS, 2) - totalAgentGroupReward;
-
-            if (takenHistory < TakenTargetLocations())
-            {
-                takenHistory = TakenTargetLocations();
-
-                totalAgentGroupReward += dif;
-
-                for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
-                    m_AgentGroup.AddGroupReward(dif);
-            }
-            else if (takenHistory > TakenTargetLocations())
-            {
-                takenHistory = TakenTargetLocations();
-
-                totalAgentGroupReward += dif;
-
-                for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
-                    m_AgentGroup.AddGroupReward(dif);
-            }
-        }
-    }
-
-    void FixedUpdate()
-    {
-        m_AgentGroup.AddGroupReward(-0.0001f);
-
-        SetAgent_XY_Coordinate();
-
-        for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++)
-        {
-            if (agentLocation.Contains(i))                                                         //  agent is at i
-                environment[i] = 1;
-            else                                                                                   //  agent is not at i
-                environment[i] = 0;
-        }
-
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
-        {
-            agentLocation[i] = pixelAgent[i].gridLocation;
-
-            for (int j = 0; j < NUMBER_OF_AGENTS; j++)
-            {
-                if (pictures[j] == pixelAgent[i].gridLocation)                                     // if agent is in a picture location
-                    canvas[pictures[j]] = 0;                                                       // change location to zero 0
-                else if (!agentLocation.Contains(pictures[j]))
-                    canvas[pictures[j]] = 1;                                                       // No other agent is occupying the grid location
-            }
-
-            if (pixelAgent[i].transform.localPosition.y < gridLocation.transform.localPosition.y)    //  pixel falls out
-            {
-                resetTimer = 0;
-
-                m_AgentGroup.AddGroupReward(-2);
-
-                m_AgentGroup.EndGroupEpisode();
-                SetArrayToZero();
-                ResetGridLocations();
-                InitPixel();
-            }
-
-            float maxTiltAngle = 40f;
-            float tiltAngle = Vector3.Angle(pixelAgent[i].transform.up, Vector3.up);
-
-            if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
-            {
-                resetTimer = 0;
-
-                m_AgentGroup.EndGroupEpisode();
-                SetArrayToZero();
-                ResetGridLocations();
-                InitPixel();
-            }
-        }
-
-        if (TakenTargetLocations() == pictures.Count)
-        {
-
-            resetTimer = 0;
-
-            m_AgentGroup.AddGroupReward(2);
-
-            m_AgentGroup.EndGroupEpisode();
-            SetArrayToZero();
-            ResetGridLocations();
-            InitPixel();
-        }
-
-        if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
-        {
-            resetTimer = 0;
-
-            m_AgentGroup.GroupEpisodeInterrupted();
-            SetArrayToZero();
-            ResetGridLocations();
-            InitPixel();
-        }
-        resetTimer += 1;
-    }
-
-    void SetAgent_XY_Coordinate()
-    {
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
-        {
-            IndexToIndices(MATRIX_SIZE, pixelAgent[i].gridLocation, ref pixelAgent[i].agent_x_coordinate, ref pixelAgent[i].agent_y_coordinate);
-        }
-    }
-
-    void SetArrayToZero()
-    {
-        for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++)
-        {
-            canvas[i] = 0;
-        }
-    }
-
-    /// <summary>
-    /// Used to check the grid is ready
-    /// </summary>
-    public bool EnvironmentReady()
-    {
-        return GridLocation.Count == Mathf.Pow(MATRIX_SIZE, 2);
-    }
-
-    //  Spawn all grid locations
-    void GridLocationSpawner()
-    {
-        float[] cordListX = new float[MATRIX_SIZE];
-
-        float[] cordListZ = new float[MATRIX_SIZE];
-
-        float startingCoordinatesX = gridLocation.transform.position.x;
-        float startingCoordinatesZ = gridLocation.transform.position.z;
+        startingCoordinatesX = gameObject.transform.position.x + canvasSizeConst;
+        startingCoordinatesZ = gameObject.transform.position.z + canvasSizeConst;
 
         for (int i = 0; i < MATRIX_SIZE; i++)
         {
@@ -219,22 +64,130 @@ public class CanvasEnv : MonoBehaviour
             startingCoordinatesZ -= 2.5f;
         }
 
-        int index;
-        for (int i = 0; i < MATRIX_SIZE; i++)
+        GridLocationSpawner();
+        ResetEnvironment();
+
+        m_AgentGroup = new SimpleMultiAgentGroup();
+        foreach (var agent in pixelAgent)
         {
-            for (int j = 0; j < MATRIX_SIZE; j++)
+            // Add to team manager
+            m_AgentGroup.RegisterAgent(agent);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float dif = 0;
+
+        dif = Mathf.Pow((float)TakenTargetLocations() / NUMBER_OF_AGENTS, 2) - totalAgentGroupReward;
+
+        if (takenHistory < TakenTargetLocations())
+        {
+            takenHistory = TakenTargetLocations();
+
+            totalAgentGroupReward += dif;
+
+            for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+                m_AgentGroup.AddGroupReward(dif);
+        }
+        else if (takenHistory > TakenTargetLocations())
+        {
+            takenHistory = TakenTargetLocations();
+
+            totalAgentGroupReward += dif;
+
+            for (int i = 0; i < NUMBER_OF_AGENTS; ++i)
+                m_AgentGroup.AddGroupReward(dif);
+        }
+    }
+
+    void FixedUpdate()
+    {
+        m_AgentGroup.AddGroupReward(-0.0001f);
+
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            //  normalize location from 0 - 1
+            pixelAgent[i].agent_x_coordinate = Math.Abs(pixelAgent[i].transform.position.x - canvasSizeConst) / (canvasSizeConst * 2);
+            pixelAgent[i].agent_z_coordinate = Math.Abs(pixelAgent[i].transform.position.z - canvasSizeConst) / (canvasSizeConst * 2);
+
+            if (pixelAgent[i].transform.position.y < gameObject.transform.position.y)    //  pixel falls out
             {
-                index = i * MATRIX_SIZE + j;
+                m_AgentGroup.AddGroupReward(-2);
 
-                if (i == 0 && j == 0)
-                    GridLocation.Add(gridLocation);
-                else
-                    GridLocation.Add(Instantiate(gridLocation, new Vector3(cordListX[i], gridLocation.transform.position.y, cordListZ[j]), Quaternion.identity));             //  gameObject
+                m_AgentGroup.EndGroupEpisode();
+                ResetEnvironment();
+            }
 
-                if (index < 10)
-                    GridLocation[index].tag = '0' + index.ToString();                                //  assign tag
-                else
-                    GridLocation[index].tag = index.ToString();
+            float maxTiltAngle = 40f;
+            float tiltAngle = Vector3.Angle(pixelAgent[i].transform.up, Vector3.up);
+
+            if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
+            {
+                m_AgentGroup.EndGroupEpisode();
+                ResetEnvironment();
+            }
+        }
+
+        if (TakenTargetLocations() == pictures.Count)
+        {
+            m_AgentGroup.AddGroupReward(2);
+
+            m_AgentGroup.EndGroupEpisode();
+            ResetEnvironment();
+        }
+
+        if (resetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
+        {
+            m_AgentGroup.GroupEpisodeInterrupted();
+            ResetEnvironment();
+        }
+        resetTimer += 1;
+    }
+
+    void ResetEnvironment()
+    {
+        resetTimer = 0;
+
+        for (int i = 0; i < GridLocation.Count; i++)
+        {
+            GridLocation[i].SetActive(false);
+        }
+
+        pictures.Clear();
+        SelectImageSet(pictures);           //  Set of 2
+        SpawnFromPool(pictures);
+        InitPixel();
+    }
+
+    //  Spawn all grid locations
+    void GridLocationSpawner()
+    {
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            GameObject targetLocation = Instantiate(gridLocation, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 0.625f, gameObject.transform.position.z), Quaternion.identity);
+            targetLocation.tag = i.ToString();
+            targetLocation.SetActive(false);
+            GridLocation.Add(targetLocation);   //  create and place grid location            //  gameObject
+        }
+    }
+
+    public void SpawnFromPool(List<int> targetLocations)
+    {
+        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        {
+            int x = 0, z = 0;
+
+            IndexToIndices(MATRIX_SIZE, targetLocations[i], ref x, ref z);
+
+            Vector3 position = new Vector3(cordListX[x], gameObject.transform.position.y + 0.625f, cordListZ[z]);
+
+            if (!GridLocation[i].activeInHierarchy)
+            {
+                GridLocation[i].transform.position = position;
+                GridLocation[i].transform.rotation = Quaternion.identity;
+                GridLocation[i].SetActive(true);
             }
         }
     }
@@ -245,38 +198,10 @@ public class CanvasEnv : MonoBehaviour
     /// </summary>
     void InitPixel()
     {
-        float[] cordListX = new float[MATRIX_SIZE];
-
-        float[] cordListZ = new float[MATRIX_SIZE];
-
-        float startingCoordinatesX = gridLocation.transform.localPosition.x;
-        float startingCoordinatesZ = gridLocation.transform.localPosition.z;
-
-        for (int i = 0; i < MATRIX_SIZE; i++)
-        {
-            cordListX[i] = startingCoordinatesX;
-            startingCoordinatesX -= 2.5f;
-
-            cordListZ[i] = startingCoordinatesZ;
-            startingCoordinatesZ -= 2.5f;
-        }
-
-        int x = 0, z = 0;
-
-        agentLocation.Clear();
-
-        //Spawn agent in top left corner
-        agentLocation.Add(0);
-        agentLocation.Add(1);
-
-        pictures.Clear();
-        SelectImageSet(pictures);           //  Set of 2
-
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
-            IndexToIndices(MATRIX_SIZE, agentLocation[i], ref x, ref z);    //  Random Spawn
-
-            pixel_RB[i].transform.localPosition = new Vector3(cordListX[x], gridLocation.transform.localPosition.y, cordListZ[z]);
+            //  index for x should be 0
+            pixel_RB[i].transform.position = new Vector3(cordListX[0], gameObject.transform.position.y + 0.625f, cordListZ[i]);
 
             pixelAgent[i] = pixel_RB[i].GetComponent<PixelAgent>();
         }
@@ -294,11 +219,11 @@ public class CanvasEnv : MonoBehaviour
         {
             case 1:
                 image.Add(65); 
-                image.Add(33);
+                image.Add(42);
                 break;
             case 2:
-                image.Add(21);
-                image.Add(79);
+                image.Add(19);
+                image.Add(34);
                 break;
         }
     }
@@ -330,70 +255,13 @@ public class CanvasEnv : MonoBehaviour
     /// <returns></returns>
     int TakenTargetLocations()
     {
-        HashSet<int> gridLocationsTaken = new HashSet<int>();
         int takenSpots = 0;
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
+        for (int i = 0; i < GridLocation.Count; i++)
         {
-            if (pictures.Contains(pixelAgent[i].gridLocation) && !gridLocationsTaken.Contains(pixelAgent[i].gridLocation))
-            {
+            if (!GridLocation[i].activeInHierarchy)
                 takenSpots++;
-                gridLocationsTaken.Add(pixelAgent[i].gridLocation);
-            }
-            else
-                gridLocationsTaken.Remove(pixelAgent[i].gridLocation);
         }
-        gridLocationsTaken.Clear();
         return takenSpots;
-    }
-
-    /// <summary>
-    /// 
-    /// The convert function:
-    /// Maps a small array onto a bigger array
-    /// 
-    /// </summary>
-    /// <param name="smallArrayIndex"></param>
-    /// <param name="smallArrayLength"></param>
-    /// <param name="bigArrayLenght"></param>
-    /// <returns></returns>
-    public int Convert(int smallArrayIndex, int smallArrayLength, int bigArrayLenght)
-    {
-        int currentMatrix_X;
-        int currentMatrix_Y;
-        int maxMatrix_X;
-        int maxMatrix_Y;
-
-        //  The idex of the small 1D array is converted into the indices of a 2D array in the same location
-        currentMatrix_X = smallArrayIndex / smallArrayLength;
-        currentMatrix_Y = smallArrayIndex - currentMatrix_X * smallArrayLength;
-
-        // Now we make the small array bigger 
-        maxMatrix_X = currentMatrix_X + ((bigArrayLenght - smallArrayLength) / 2);
-        maxMatrix_Y = currentMatrix_Y + ((bigArrayLenght - smallArrayLength) / 2);
-
-        //  The indices of the big 2D array is now converted into the index of a 1D array
-        int bigArrayIndex = maxMatrix_X * bigArrayLenght + maxMatrix_Y;
-
-        return bigArrayIndex;
-    }
-
-    void VisualizeImage()
-    {
-        for (int i = 0; i < NUMBER_OF_AGENTS; i++)
-        {
-            if (canvas[pictures[i]] == 1)
-                GridLocation[pictures[i]].GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.75f);
-            else
-                GridLocation[pictures[i]].GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0f);
-        }
-    }
-
-    void ResetGridLocations()
-    {
-        for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++)
-        {
-            GridLocation[i].GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0f);
-        }
     }
 
     /// <summary>
