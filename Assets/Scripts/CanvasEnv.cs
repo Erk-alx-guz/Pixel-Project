@@ -213,7 +213,7 @@ public class CanvasEnv : MonoBehaviour
 
         int select;
 
-        select = UnityEngine.Random.Range(1, 3);
+        select = UnityEngine.Random.Range(1, 5);
 
         switch (select)
         {
@@ -224,6 +224,14 @@ public class CanvasEnv : MonoBehaviour
             case 2:
                 image.Add(19);
                 image.Add(34);
+                break;            
+            case 3:
+                image.Add(9);
+                image.Add(78);
+                break;            
+            case 4:
+                image.Add(50);
+                image.Add(58);
                 break;
         }
     }
