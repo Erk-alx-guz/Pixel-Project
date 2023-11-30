@@ -94,9 +94,14 @@ public class PixelAgent : Agent
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Pixel") && (Mathf.Abs(pixel_RB.velocity.x) > 3 || Mathf.Abs(pixel_RB.velocity.z) > 3))
+        if ((collision.transform.CompareTag("Pixel") || collision.transform.CompareTag("done")) && (Mathf.Abs(pixel_RB.velocity.x) > 3 || Mathf.Abs(pixel_RB.velocity.z) > 3))
         {
             AddReward(-0.05f);
+        }
+
+        if (collision.transform.CompareTag("done") && (Mathf.Abs(pixel_RB.velocity.x) > 0.5 || Mathf.Abs(pixel_RB.velocity.z) > 0.5))
+        {
+            AddReward(-0.75f);
         }
     }
 
@@ -112,6 +117,7 @@ public class PixelAgent : Agent
                 {
                     done = true;
                     env.GridLocation[integerNumber].SetActive(false);
+                    gameObject.tag = "done";
                 }
                 else
                 {
