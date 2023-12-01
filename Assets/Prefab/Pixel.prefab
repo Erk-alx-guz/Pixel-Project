@@ -356,14 +356,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: RayPerceptionSensor
-  m_DetectableTags: []
+  m_DetectableTags:
+  - wall
+  - Pixel
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 165
   m_SphereCastRadius: 0.7
   m_RayLength: 2.5
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 4294967241
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
