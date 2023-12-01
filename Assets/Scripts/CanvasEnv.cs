@@ -47,7 +47,7 @@ public class CanvasEnv : MonoBehaviour
     float startingCoordinatesX;
     float startingCoordinatesZ;
 
-    const float canvasSizeConst = 11.29f;
+    const float canvasSizeConst = 11.272f;
 
     // Start is called before the first frame update
     void Start()
@@ -58,10 +58,10 @@ public class CanvasEnv : MonoBehaviour
         for (int i = 0; i < MATRIX_SIZE; i++)
         {
             cordListX[i] = startingCoordinatesX;
-            startingCoordinatesX -= 2.5f;
+            startingCoordinatesX -= 2.5048888889f;
 
             cordListZ[i] = startingCoordinatesZ;
-            startingCoordinatesZ -= 2.5f;
+            startingCoordinatesZ -= 2.5048888889f;
         }
 
         GridLocationSpawner();
