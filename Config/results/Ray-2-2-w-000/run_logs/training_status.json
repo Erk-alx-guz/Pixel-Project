@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 48499932,
+                "file_path": "results\\Ray-2-2-w-000\\Pixel\\Pixel-48499932.onnx",
+                "reward": 0.0,
+                "creation_time": 1701248563.8125207,
+                "auxillary_file_paths": [
+                    "results\\Ray-2-2-w-000\\Pixel\\Pixel-48499932.pt"
+                ]
+            },
+            {
+                "steps": 48999960,
+                "file_path": "results\\Ray-2-2-w-000\\Pixel\\Pixel-48999960.onnx",
+                "reward": -0.0006688963621854782,
+                "creation_time": 1701249545.915877,
+                "auxillary_file_paths": [
+                    "results\\Ray-2-2-w-000\\Pixel\\Pixel-48999960.pt"
+                ]
+            },
+            {
+                "steps": 49499920,
+                "file_path": "results\\Ray-2-2-w-000\\Pixel\\Pixel-49499920.onnx",
+                "reward": -9.302325720010802e-05,
+                "creation_time": 1701250534.6278152,
+                "auxillary_file_paths": [
+                    "results\\Ray-2-2-w-000\\Pixel\\Pixel-49499920.pt"
+                ]
+            },
+            {
+                "steps": 49999934,
+                "file_path": "results\\Ray-2-2-w-000\\Pixel\\Pixel-49999934.onnx",
+                "reward": -0.00019607843429434533,
+                "creation_time": 1701251781.1931193,
+                "auxillary_file_paths": [
+                    "results\\Ray-2-2-w-000\\Pixel\\Pixel-49999934.pt"
+                ]
+            },
+            {
+                "steps": 50000062,
+                "file_path": "results\\Ray-2-2-w-000\\Pixel\\Pixel-50000062.onnx",
+                "reward": -0.00019607843429434533,
+                "creation_time": 1701251781.3368003,
+                "auxillary_file_paths": [
+                    "results\\Ray-2-2-w-000\\Pixel\\Pixel-50000062.pt"
+                ]
+            }
+        ],
+        "elo": 1124.6988212533656,
+        "final_checkpoint": {
+            "steps": 50000062,
+            "file_path": "results\\Ray-2-2-w-000\\Pixel.onnx",
+            "reward": -0.00019607843429434533,
+            "creation_time": 1701251781.3368003,
+            "auxillary_file_paths": [
+                "results\\Ray-2-2-w-000\\Pixel\\Pixel-50000062.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.13.1"
+    }
+}
