@@ -9,7 +9,7 @@ public class CanvasEnv : MonoBehaviour
 {
     const int MATRIX_SIZE = 10;
 
-    const int NUMBER_OF_AGENTS = 2;
+    const int NUMBER_OF_AGENTS = 4;
 
     //  Array of the Agent scripts to 
     [Header("Agent List")]
@@ -211,21 +211,10 @@ public class CanvasEnv : MonoBehaviour
     {
         image.Clear();
 
-        int select;
-
-        select = UnityEngine.Random.Range(1, 3);
-
-        switch (select)
-        {
-            case 1:
-                image.Add(65); 
-                image.Add(42);
-                break;
-            case 2:
-                image.Add(19);
-                image.Add(34);
-                break;
-        }
+        image.Add(65); 
+        image.Add(42);
+        image.Add(19);
+        image.Add(34);
     }
 
     /// <summary>
