@@ -42,7 +42,7 @@ public class PixelAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        //  Maybe set velocity to zero
+        pixel_RB.isKinematic = false;
         pixel_RB.velocity = Vector3.zero;
         pixel_RB.rotation = Quaternion.identity;
         done = false;
@@ -106,17 +106,24 @@ public class PixelAgent : Agent
         int integerNumber;
         if (other.tag != "Pixel")
         {
-            if (other.bounds.Contains(coll.bounds.center))
+            if (int.TryParse(other.tag, out integerNumber))
             {
-                if (int.TryParse(other.tag, out integerNumber))
+                Collider agentCollider = pixel.GetComponent<Collider>();
+
+                Bounds targetBounds = env.GridLocation[integerNumber].GetComponent<Collider>().bounds;
+
+                Vector3 wiggleRoom = new Vector3(0.125f, 0.125f, 0.125f);
+
+                if (targetBounds.Contains(agentCollider.bounds.min + wiggleRoom) && targetBounds.Contains(agentCollider.bounds.max - wiggleRoom))
                 {
                     done = true;
                     env.GridLocation[integerNumber].SetActive(false);
+                    pixel_RB.isKinematic = true;
                 }
-                else
-                {
-                    Console.WriteLine("The string is not a valid integer.");
-                }
+            }
+            else
+            {
+                Console.WriteLine("The string is not a valid integer.");
             }
         }
     }
