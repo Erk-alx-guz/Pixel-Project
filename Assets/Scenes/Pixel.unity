@@ -6325,6 +6325,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PixelProject
       objectReference: {fileID: 0}
+    - target: {fileID: 3276616775405753970, guid: 9ef20f1b9ac839a4fb7a0884c442460a,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4611828971016658959, guid: 9ef20f1b9ac839a4fb7a0884c442460a,
         type: 3}
       propertyPath: m_RootOrder
