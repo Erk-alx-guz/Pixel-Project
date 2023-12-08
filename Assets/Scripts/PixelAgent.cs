@@ -80,9 +80,9 @@ public class PixelAgent : Agent
 
         if (!done)
         {
-            //  Don't do anything untill the environment is ready
             pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
             pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
+            pixel.transform.Rotate(pixel.transform.up * vectorAction[++i], Time.fixedDeltaTime * 20f);
         }
     }
 
