@@ -112,7 +112,7 @@ public class PixelAgent : Agent
 
                 Bounds targetBounds = env.GridLocation[integerNumber].GetComponent<Collider>().bounds;
 
-                Vector3 wiggleRoom = new Vector3(0.125f, 0.125f, 0.125f);
+                Vector3 wiggleRoom = new Vector3(0.1875f, 0.1875f, 0.1875f);   //  the smaller the values the harder it is
 
                 if (targetBounds.Contains(agentCollider.bounds.min + wiggleRoom) && targetBounds.Contains(agentCollider.bounds.max - wiggleRoom))
                 {
