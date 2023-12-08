@@ -125,6 +125,7 @@ public class CanvasEnv : MonoBehaviour
 
             if (tiltAngle > maxTiltAngle)                                                          //  if agent is flipped on side or belly up
             {
+                m_AgentGroup.AddGroupReward(-2);
                 m_AgentGroup.EndGroupEpisode();
                 ResetEnvironment();
             }
