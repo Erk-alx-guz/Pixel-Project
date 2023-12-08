@@ -54,6 +54,8 @@ public class CanvasEnv : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pictures.Add(19);
+        pictures.Add(34);
         GridLocationSpawner();
         InitPixel();
 
@@ -269,8 +271,8 @@ public class CanvasEnv : MonoBehaviour
         agentLocation.Add(0);
         agentLocation.Add(1);
 
-        pictures.Clear();
-        SelectImageSet(pictures);           //  Set of 2
+        //pictures.Clear();
+        //SelectImageSet(pictures);           //  Set of 2
 
         for (int i = 0; i < NUMBER_OF_AGENTS; i++)
         {
