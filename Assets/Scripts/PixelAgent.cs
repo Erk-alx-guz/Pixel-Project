@@ -55,7 +55,23 @@ public class PixelAgent : Agent
         sensor.AddObservation(agent_z_coordinate);              //  1
 
         sensor.AddObservation(done);                            //  1
+
+        for (int i = 0; i < env.GridLocation.Count; i++)
+        {
+            if (env.GridLocation[i].activeInHierarchy)          // n * 2
+            {
+                sensor.AddObservation(Math.Abs(env.GridLocation[i].transform.position.x - env.canvasSizeConst) / (env.canvasSizeConst * 2));
+                sensor.AddObservation(Math.Abs(env.GridLocation[i].transform.position.z - env.canvasSizeConst) / (env.canvasSizeConst * 2));
+            }
+            else
+            {
+                sensor.AddObservation(0);
+                sensor.AddObservation(0);
+            }
+        }
     }
+
+    //Math.Abs(pixelAgent[i].transform.position.z - canvasSizeConst) / (canvasSizeConst * 2);
 
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
     public override void Heuristic(in ActionBuffers actionsOut)

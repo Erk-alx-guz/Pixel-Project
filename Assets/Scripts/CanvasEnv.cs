@@ -47,7 +47,8 @@ public class CanvasEnv : MonoBehaviour
     float startingCoordinatesX;
     float startingCoordinatesZ;
 
-    const float canvasSizeConst = 11.272f;
+    [HideInInspector]
+    public float canvasSizeConst = 11.272f;
 
     // Start is called before the first frame update
     void Start()
