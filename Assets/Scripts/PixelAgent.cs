@@ -50,9 +50,9 @@ public class PixelAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(agent_x_coordinate);              //  1
+        sensor.AddObservation(pixel.transform.localPosition.normalized.x);              //  1
 
-        sensor.AddObservation(agent_z_coordinate);              //  1
+        sensor.AddObservation(pixel.transform.localPosition.normalized.z);              //  1
 
         sensor.AddObservation(done);                            //  1
 
@@ -60,8 +60,8 @@ public class PixelAgent : Agent
         {
             if (env.GridLocation[i].activeInHierarchy)          // n * 2
             {
-                sensor.AddObservation(Math.Abs(env.GridLocation[i].transform.position.x - env.canvasSizeConst) / (env.canvasSizeConst * 2));
-                sensor.AddObservation(Math.Abs(env.GridLocation[i].transform.position.z - env.canvasSizeConst) / (env.canvasSizeConst * 2));
+                sensor.AddObservation(env.GridLocation[i].transform.localPosition.normalized.x);
+                sensor.AddObservation(env.GridLocation[i].transform.localPosition.normalized.z);
             }
             else
             {
