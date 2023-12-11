@@ -65,8 +65,8 @@ public class PixelAgent : Agent
             }
             else
             {
-                sensor.AddObservation(0);
-                sensor.AddObservation(0);
+                sensor.AddObservation(Vector3.zero.x);
+                sensor.AddObservation(Vector3.zero.z);
             }
         }
     }
@@ -128,7 +128,7 @@ public class PixelAgent : Agent
 
                 Bounds targetBounds = env.GridLocation[integerNumber].GetComponent<Collider>().bounds;
 
-                Vector3 wiggleRoom = new Vector3(0.1875f, 0.1875f, 0.1875f);   //  the smaller the values the harder it is
+                Vector3 wiggleRoom = new Vector3(0.20f, 0.20f, 0.20f);   //  the smaller the values the harder it is
 
                 if (targetBounds.Contains(agentCollider.bounds.min + wiggleRoom) && targetBounds.Contains(agentCollider.bounds.max - wiggleRoom))
                 {
