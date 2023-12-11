@@ -50,9 +50,9 @@ public class PixelAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(pixel.transform.localPosition.normalized.x);              //  1
+        sensor.AddObservation(pixel.transform.position.normalized.x);              //  1
 
-        sensor.AddObservation(pixel.transform.localPosition.normalized.z);              //  1
+        sensor.AddObservation(pixel.transform.position.normalized.z);              //  1
 
         sensor.AddObservation(done);                            //  1
 
@@ -60,8 +60,8 @@ public class PixelAgent : Agent
         {
             if (env.GridLocation[i].activeInHierarchy)          // n * 2
             {
-                sensor.AddObservation(env.GridLocation[i].transform.localPosition.normalized.x);
-                sensor.AddObservation(env.GridLocation[i].transform.localPosition.normalized.z);
+                sensor.AddObservation(env.GridLocation[i].transform.position.normalized.x);
+                sensor.AddObservation(env.GridLocation[i].transform.position.normalized.z);
             }
             else
             {
@@ -70,8 +70,6 @@ public class PixelAgent : Agent
             }
         }
     }
-
-    //Math.Abs(pixelAgent[i].transform.position.z - canvasSizeConst) / (canvasSizeConst * 2);
 
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
     public override void Heuristic(in ActionBuffers actionsOut)
