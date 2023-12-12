@@ -16,7 +16,7 @@ public class PixelAgent : Agent
     Rigidbody pixel_RB;
 
     // User input
-    private float speed = 2.0f;
+    private float speed = 1.5f;
     private float horizontalInput;
     private float forwardInput;
 
@@ -74,30 +74,69 @@ public class PixelAgent : Agent
     //Heuristic Controls for debugging.Has not been tested, but "TestMotionScript" contains similar code that will work for testing.
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        //This is for player input
+        var action = actionsOut.DiscreteActions;
 
-        horizontalInput = Input.GetAxis("Horizontal");
-        forwardInput = Input.GetAxis("Vertical");
+        var dirToGo = Vector3.zero;
 
         if (!done)
         {
-            pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * forwardInput);
-            pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * horizontalInput);
+            if (Input.GetKey(KeyCode.D))
+            {
+                dirToGo = transform.forward * -0.75f;
+            }
+            else if (Input.GetKey(KeyCode.W))
+            {
+                dirToGo = transform.right * 0.75f;
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                dirToGo = transform.forward * 0.75f;
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                dirToGo = transform.right * -0.75f;
+            }
+
+            pixel_RB.AddForce(dirToGo * speed, ForceMode.VelocityChange);
         }
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        var i = -1;
-
-        var vectorAction = actionBuffers.ContinuousActions;
-
         if (!done)
+            MoveAgent(actionBuffers.DiscreteActions);
+    }
+
+    public void MoveAgent(ActionSegment<int> act)
+    {
+        var dirToGo = Vector3.zero;
+        //var rotateDir = Vector3.zero;
+
+        var action = act[0];
+
+        switch (action)
         {
-            pixel.transform.Translate(Vector3.right * Time.deltaTime * speed * vectorAction[++i]);
-            pixel.transform.Translate(Vector3.back * Time.deltaTime * speed * vectorAction[++i]);
-            pixel.transform.Rotate(pixel.transform.up * vectorAction[++i], Time.fixedDeltaTime * 20f);
+            case 1:
+                dirToGo = transform.forward * 0.75f;
+                break;
+            case 2:
+                dirToGo = transform.forward * -0.75f;
+                break;
+            case 3:
+                dirToGo = transform.right * -0.75f;
+                break;
+            case 4:
+                dirToGo = transform.right * 0.75f;
+                break;
+            //case 5:
+            //    rotateDir = transform.up * 1f;
+            //    break;
+            //case 6:
+            //    rotateDir = transform.up * -1f;
+            //    break;
         }
+        //transform.Rotate(rotateDir, Time.fixedDeltaTime * 200f);
+        pixel_RB.AddForce(dirToGo * speed, ForceMode.VelocityChange);
     }
 
     /// <summary>
@@ -128,7 +167,8 @@ public class PixelAgent : Agent
 
                 Vector3 wiggleRoom = new Vector3(0.20f, 0.20f, 0.20f);   //  the smaller the values the harder it is
 
-                if (targetBounds.Contains(agentCollider.bounds.min + wiggleRoom) && targetBounds.Contains(agentCollider.bounds.max - wiggleRoom))
+                //if (targetBounds.Contains(agentCollider.bounds.min + wiggleRoom) && targetBounds.Contains(agentCollider.bounds.max - wiggleRoom))
+                if (targetBounds.Contains(agentCollider.bounds.center))
                 {
                     done = true;
                     env.GridLocation[integerNumber].SetActive(false);
