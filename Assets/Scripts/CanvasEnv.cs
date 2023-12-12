@@ -9,7 +9,7 @@ public class CanvasEnv : MonoBehaviour
 {
     const int MATRIX_SIZE = 10;
 
-    const int NUMBER_OF_AGENTS = 4;
+    const int NUMBER_OF_AGENTS = 8;
 
     //  Array of the Agent scripts to 
     [Header("Agent List")]
@@ -213,10 +213,14 @@ public class CanvasEnv : MonoBehaviour
     {
         image.Clear();
 
-        image.Add(65); 
+        image.Add(81); 
         image.Add(42);
         image.Add(19);
         image.Add(34);
+        image.Add(55); 
+        image.Add(49);
+        image.Add(99);
+        image.Add(76);
     }
 
     /// <summary>
