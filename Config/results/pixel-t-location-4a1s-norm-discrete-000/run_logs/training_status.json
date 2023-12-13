@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 48499972,
+                "file_path": "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-48499972.onnx",
+                "reward": 0.0,
+                "creation_time": 1702450167.6907248,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-48499972.pt"
+                ]
+            },
+            {
+                "steps": 48999968,
+                "file_path": "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-48999968.onnx",
+                "reward": -0.0005357143070016589,
+                "creation_time": 1702450532.438612,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-48999968.pt"
+                ]
+            },
+            {
+                "steps": 49499936,
+                "file_path": "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-49499936.onnx",
+                "reward": 0.0,
+                "creation_time": 1702450888.416838,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-49499936.pt"
+                ]
+            },
+            {
+                "steps": 49999972,
+                "file_path": "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-49999972.onnx",
+                "reward": null,
+                "creation_time": 1702451337.4546824,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-49999972.pt"
+                ]
+            },
+            {
+                "steps": 50062308,
+                "file_path": "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-50062308.onnx",
+                "reward": null,
+                "creation_time": 1702451345.9948263,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-50062308.pt"
+                ]
+            }
+        ],
+        "elo": -226.4243522870945,
+        "final_checkpoint": {
+            "steps": 50062308,
+            "file_path": "results/pixel-t-location-4a1s-norm-discrete-000/Pixel.onnx",
+            "reward": null,
+            "creation_time": 1702451345.9948263,
+            "auxillary_file_paths": [
+                "results/pixel-t-location-4a1s-norm-discrete-000/Pixel/Pixel-50062308.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.1.0"
+    }
+}
