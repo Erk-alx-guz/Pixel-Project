@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 98499912,
+                "file_path": "results/pixel-ray-1-4-001/Pixel/Pixel-98499912.onnx",
+                "reward": null,
+                "creation_time": 1702091774.9482179,
+                "auxillary_file_paths": [
+                    "results/pixel-ray-1-4-001/Pixel/Pixel-98499912.pt"
+                ]
+            },
+            {
+                "steps": 98999928,
+                "file_path": "results/pixel-ray-1-4-001/Pixel/Pixel-98999928.onnx",
+                "reward": null,
+                "creation_time": 1702092158.2988305,
+                "auxillary_file_paths": [
+                    "results/pixel-ray-1-4-001/Pixel/Pixel-98999928.pt"
+                ]
+            },
+            {
+                "steps": 99499900,
+                "file_path": "results/pixel-ray-1-4-001/Pixel/Pixel-99499900.onnx",
+                "reward": 0.0,
+                "creation_time": 1702092611.212237,
+                "auxillary_file_paths": [
+                    "results/pixel-ray-1-4-001/Pixel/Pixel-99499900.pt"
+                ]
+            },
+            {
+                "steps": 99999884,
+                "file_path": "results/pixel-ray-1-4-001/Pixel/Pixel-99999884.onnx",
+                "reward": 0.0,
+                "creation_time": 1702092964.3552182,
+                "auxillary_file_paths": [
+                    "results/pixel-ray-1-4-001/Pixel/Pixel-99999884.pt"
+                ]
+            },
+            {
+                "steps": 100009228,
+                "file_path": "results/pixel-ray-1-4-001/Pixel/Pixel-100009228.onnx",
+                "reward": 0.0,
+                "creation_time": 1702092965.988729,
+                "auxillary_file_paths": [
+                    "results/pixel-ray-1-4-001/Pixel/Pixel-100009228.pt"
+                ]
+            }
+        ],
+        "elo": -775.0464439671364,
+        "final_checkpoint": {
+            "steps": 100009228,
+            "file_path": "results/pixel-ray-1-4-001/Pixel.onnx",
+            "reward": 0.0,
+            "creation_time": 1702092965.988729,
+            "auxillary_file_paths": [
+                "results/pixel-ray-1-4-001/Pixel/Pixel-100009228.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.1.0"
+    }
+}

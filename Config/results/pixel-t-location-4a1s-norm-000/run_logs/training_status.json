@@ -1,0 +1,66 @@
+{
+    "Pixel": {
+        "checkpoints": [
+            {
+                "steps": 98499908,
+                "file_path": "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-98499908.onnx",
+                "reward": -0.007812500116415322,
+                "creation_time": 1702388388.891704,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-98499908.pt"
+                ]
+            },
+            {
+                "steps": 98999928,
+                "file_path": "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-98999928.onnx",
+                "reward": null,
+                "creation_time": 1702388723.701323,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-98999928.pt"
+                ]
+            },
+            {
+                "steps": 99499964,
+                "file_path": "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-99499964.onnx",
+                "reward": -0.15000000409781933,
+                "creation_time": 1702389028.7350347,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-99499964.pt"
+                ]
+            },
+            {
+                "steps": 99999928,
+                "file_path": "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-99999928.onnx",
+                "reward": 0.0,
+                "creation_time": 1702389327.6520307,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-99999928.pt"
+                ]
+            },
+            {
+                "steps": 100033464,
+                "file_path": "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-100033464.onnx",
+                "reward": 0.0,
+                "creation_time": 1702389331.7098114,
+                "auxillary_file_paths": [
+                    "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-100033464.pt"
+                ]
+            }
+        ],
+        "elo": -773.5786881916134,
+        "final_checkpoint": {
+            "steps": 100033464,
+            "file_path": "results/pixel-t-location-4a1s-norm-000/Pixel.onnx",
+            "reward": 0.0,
+            "creation_time": 1702389331.7098114,
+            "auxillary_file_paths": [
+                "results/pixel-t-location-4a1s-norm-000/Pixel/Pixel-100033464.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.1.0"
+    }
+}
